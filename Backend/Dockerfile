@@ -1,17 +1,17 @@
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS base
 WORKDIR /app
 EXPOSE 5005
 
 ENV ASPNETCORE_URLS=http://+:5005
 
 USER app
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 ARG configuration=Release
 WORKDIR /src
 COPY ["API/API.csproj", "API/"]
-COPY ["Application/Application.csproj", "Application/"]
-COPY ["Domain/Domain.csproj", "Domain/"]
-COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
+COPY ["Application/Application.csproj" , "Application/"]
+COPY ["Domain/Domain.csproj" , "Domain/"] 
+COPY ["Infrastructure/Infrastructure.csproj" , "Infrastructure/"]  
 RUN dotnet restore "API/API.csproj"
 COPY . .
 WORKDIR "/src/API"

@@ -5,7 +5,7 @@ services:
     image: api
     build:
       context: .
-      dockerfile: API/Dockerfile
+      dockerfile: Dockerfile
       args:
         - configuration=Debug
     ports:
