@@ -34,6 +34,18 @@ namespace API.Routes
                     return result is null ? Results.NotFound() : Results.Ok(result);
                 }
             );
+
+            group
+                .MapPost(
+                    "/password-reset",
+                    async (PasswordResetDto dto, ISender sender) =>
+                    {
+                        var command = new PasswordResetCommand(dto);
+                        var result = await sender.Send(command);
+                        return result is null ? Results.NotFound() : Results.StatusCode(200);
+                    }
+                )
+                .RequireAuthorization();
         }
     }
 }

@@ -40,6 +40,27 @@ namespace Infrastructure.Repositories
             return user;
         }
 
+        public async Task<User?> ResetPassword(PasswordResetRequest resetRequest)
+        {
+            var user = await userManager.FindByIdAsync(resetRequest.UserId);
+            if (user is null)
+                return null;
+
+            var resetResult = await userManager.ChangePasswordAsync(
+                user,
+                resetRequest.CurrentPassword,
+                resetRequest.NewPassword
+            );
+            if (!resetResult.Succeeded)
+            {
+                throw new Exception(
+                    string.Join(", ", resetResult.Errors.Select(e => e.Description))
+                );
+            }
+
+            return user;
+        }
+
         public async Task<User?> SignIn(SignInRequest signInRequest)
         {
             var user = await userManager.FindByNameAsync(signInRequest.Username);

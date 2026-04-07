@@ -11,5 +11,6 @@ namespace Domain.Interfaces
     {
         public Task<User> CreateUser(User user, CreateUserRequest userRequest);
         public Task<User?> SignIn(SignInRequest signInRequest);
+        public Task<User?> ResetPassword(PasswordResetRequest resetRequest);
     }
 }

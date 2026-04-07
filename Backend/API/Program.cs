@@ -21,9 +21,9 @@ builder.Services.AddOpenApi(
         options.AddDocumentTransformer(
             (doc, ctx, ct) =>
             {
-                doc.Info.Title = "Tally Management System API";
+                doc.Info.Title = "CargoPin System API";
                 doc.Info.Description =
-                    "Port operations API for managing tally sheets, vessels, cargo and teams.";
+                    "Port operations API for managing Merchandises positions in Port";
                 doc.Info.Version = "v1";
                 return Task.CompletedTask;
             }
@@ -68,9 +68,8 @@ if (app.Environment.IsDevelopment())
         "/docs",
         options =>
         {
-            options.Title = "Tally API";
+            options.Title = "CargoPin API";
             options.DarkMode = true;
-            options.BaseServerUrl = "https://tally-app-production.up.railway.app/";
             options.DefaultHttpClient = new(ScalarTarget.CSharp, ScalarClient.HttpClient);
             app.MapScalarApiReference(options =>
                 options
