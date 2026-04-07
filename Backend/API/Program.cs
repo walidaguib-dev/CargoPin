@@ -1,12 +1,14 @@
-using API;
-using API.Helpers;
-using API.middlewares;
+using API.Routes.Extensions;
 using API.Services;
 using Application;
+using FluentValidation;
 using Hangfire;
 using Infrastructure;
 using Infrastructure.Data;
+using Infrastructure.Services;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,30 +21,70 @@ builder.Services.AddOpenApi(
         options.AddDocumentTransformer(
             (doc, ctx, ct) =>
             {
-                doc.Info.Title = "CargoPin System Api";
-                doc.Info.Description = "CargoPin API for managing Merchandises locations";
+                doc.Info.Title = "Tally Management System API";
+                doc.Info.Description =
+                    "Port operations API for managing tally sheets, vessels, cargo and teams.";
                 doc.Info.Version = "v1";
                 return Task.CompletedTask;
             }
         );
     }
 );
-
-builder.Services.ConfigureCors();
-
-builder.Services.GetInfrastructureServices(builder, builder.Configuration);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        name: "AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        }
+    );
+});
+builder.Services.AddLoggingConfiguration(builder.Configuration);
 builder.Services.GetApplicationServices();
-builder.Services.GetApiServices(builder.Configuration);
+builder.Services.AddAPIServices();
+builder.Services.AddValidations();
+builder.Services.AddIdentityServices();
+builder.Services.ConfigureCloudinary(builder);
+builder.Services.ConfigureRedisServices(builder.Configuration);
+builder.Services.AddDatabase(builder.Configuration);
+builder.Services.ConfigureBackgroundJobs(builder);
+builder.Services.AddAuthenticationServices(builder);
 builder.Services.AddAuthorization();
+builder.Services.AddRateLimitingServices();
+builder.Services.AddFusionCache(builder.Configuration);
 builder.Services.AddSignalR();
+builder.Services.SetupResponseCompression();
+
 builder.Host.UseSerilog();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+app.MapOpenApi();
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.ConfigureScalarUI();
+    app.MapScalarApiReference(
+        "/docs",
+        options =>
+        {
+            options.Title = "Tally API";
+            options.DarkMode = true;
+            options.BaseServerUrl = "https://tally-app-production.up.railway.app/";
+            options.DefaultHttpClient = new(ScalarTarget.CSharp, ScalarClient.HttpClient);
+            app.MapScalarApiReference(options =>
+                options
+                    .AddPreferredSecuritySchemes("Bearer")
+                    .AddHttpAuthentication(
+                        "Bearer",
+                        auth =>
+                        {
+                            auth.Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+                        }
+                    )
+            );
+        }
+    );
 }
 
 using (var scope = app.Services.CreateScope())
@@ -52,13 +94,19 @@ using (var scope = app.Services.CreateScope())
     await db.Database.MigrateAsync(); // applies any pending migrations
 }
 
-app.ConfigureApiDocumentation();
+app.SetupDocumentation();
+
 app.UseCors("AllowAll");
+
 app.UseResponseCompression();
 app.UseHttpsRedirection();
+
 app.UseGlobalExceptionHandling(app.Environment);
+app.UseRateLimiter();
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSerilogRequestLogging();
+app.GetApiEndpoints();
 app.UseHangfireDashboard("/hangfire", new DashboardOptions { Authorization = [new JobsAuth()] });
 app.Run();

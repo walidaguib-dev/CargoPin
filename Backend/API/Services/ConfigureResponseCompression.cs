@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.ResponseCompression;
 
 namespace API.Services
 {
-    public static class ResponseCompression
+    public static class ConfigureResponseCompression
     {
-        public static void ConfigureResponseCompression(this IServiceCollection services)
+        public static void SetupResponseCompression(this IServiceCollection services)
         {
             services.AddResponseCompression(options =>
             {

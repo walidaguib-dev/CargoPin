@@ -15,14 +15,6 @@ namespace Infrastructure
             this IServiceCollection services,
             WebApplicationBuilder builder,
             IConfiguration configuration
-        )
-        {
-            services.ConfigureAuthentication(builder);
-            services.ConfigureBackgroundJobs(builder);
-            services.ConfigureDatabase(configuration);
-            services.ConfigureRedisCaching(configuration);
-            services.ConfigureFusionCache(configuration);
-            services.ConfigureCloudinary(builder);
-        }
+        ) { }
     }
 }
