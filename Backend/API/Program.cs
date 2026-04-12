@@ -55,6 +55,7 @@ builder.Services.AddRateLimitingServices();
 builder.Services.AddFusionCache(builder.Configuration);
 builder.Services.AddSignalR();
 builder.Services.SetupResponseCompression();
+builder.Services.ConfigureResend(builder.Configuration);
 
 builder.Host.UseSerilog();
 var app = builder.Build();

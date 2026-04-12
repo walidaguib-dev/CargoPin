@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ltffPSW2fTY=",
+  "dgSpecHash": "bQSWJdB35fw=",
   "success": true,
   "projectFilePath": "D:\\CargoPin\\Backend\\API\\API.csproj",
   "expectedPackageFiles": [
@@ -53,6 +53,7 @@
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\npgsql\\10.0.1\\npgsql.10.0.1.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\10.0.0\\npgsql.entityframeworkcore.postgresql.10.0.0.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\pipelines.sockets.unofficial\\2.2.8\\pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "C:\\Users\\Walid Aguib\\.nuget\\packages\\resend\\0.3.0\\resend.0.3.0.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\scalar.aspnetcore\\2.12.34\\scalar.aspnetcore.2.12.34.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\serilog\\4.3.0\\serilog.4.3.0.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\serilog.aspnetcore\\10.0.0\\serilog.aspnetcore.10.0.0.nupkg.sha512",

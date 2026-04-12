@@ -9,5 +9,6 @@ namespace Domain.Entities
     public class User : IdentityUser
     {
         public RefreshToken refreshTokens { get; set; } = null!;
+        public List<OutboxEmail> OutboxEmails { get; set; } = [];
     }
 }

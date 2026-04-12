@@ -736,6 +736,14 @@
           }
         }
       },
+      "Resend/0.3.0": {
+        "runtime": {
+          "lib/net8.0/Resend.dll": {
+            "assemblyVersion": "0.3.0.0",
+            "fileVersion": "0.3.0.0"
+          }
+        }
+      },
       "Scalar.AspNetCore/2.12.34": {
         "runtime": {
           "lib/net10.0/Scalar.AspNetCore.dll": {
@@ -1045,6 +1053,7 @@
           "Microsoft.Extensions.Caching.StackExchangeRedis": "10.0.2",
           "Npgsql": "10.0.1",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.0",
+          "Resend": "0.3.0",
           "ZiggyCreatures.FusionCache": "2.5.0",
           "ZiggyCreatures.FusionCache.Serialization.SystemTextJson": "2.5.0"
         },
@@ -1370,6 +1379,13 @@
       "sha512": "sha512-zG2FApP5zxSx6OcdJQLbZDk2AVlN2BNQD6MorwIfV6gVj0RRxWPEp2LXAxqDGZqeNV1Zp0BNPcNaey/GXmTdvQ==",
       "path": "pipelines.sockets.unofficial/2.2.8",
       "hashPath": "pipelines.sockets.unofficial.2.2.8.nupkg.sha512"
+    },
+    "Resend/0.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-3MiS6JaevFdCdg61e55DrH7BD1DzlfmHv8SvKFuiTF8y0DGl8fSt0TREgIJRwXx2x8qPKBcl4qIqDfm/slnYyw==",
+      "path": "resend/0.3.0",
+      "hashPath": "resend.0.3.0.nupkg.sha512"
     },
     "Scalar.AspNetCore/2.12.34": {
       "type": "package",

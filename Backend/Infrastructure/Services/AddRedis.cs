@@ -1,15 +1,18 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace Infrastructure.Services
 {
     public static class AddRedis
     {
-        public static IServiceCollection ConfigureRedisServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureRedisServices(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
         {
             services.AddStackExchangeRedisCache(options =>
             {
@@ -17,8 +20,8 @@ namespace Infrastructure.Services
                 options.InstanceName = "MyAppCache_";
             });
             services.AddSingleton<IConnectionMultiplexer>(
-                ConnectionMultiplexer.Connect(configuration["RedisConnectionString"]!));
-
+                ConnectionMultiplexer.Connect(configuration["RedisConnectionString"]!)
+            );
 
             return services;
         }

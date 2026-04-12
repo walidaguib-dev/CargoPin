@@ -15,6 +15,7 @@ namespace Infrastructure.Data
             : base(options) { }
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<OutboxEmail> OutboxEmails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

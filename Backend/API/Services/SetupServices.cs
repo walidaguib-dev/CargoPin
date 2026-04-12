@@ -12,6 +12,7 @@ namespace API.Services
             // custom services
             services.AddScoped<IUsers, UsersRepository>();
             services.AddScoped<ITokens, TokensRepository>();
+            services.AddScoped<IOutboxEmail, OutboxEmailRepository>();
 
             // pipelines services
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

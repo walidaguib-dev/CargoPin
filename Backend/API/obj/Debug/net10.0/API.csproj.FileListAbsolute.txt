@@ -183,3 +183,4 @@ D:\CargoPin\Backend\API\obj\Debug\net10.0\refint\API.dll
 D:\CargoPin\Backend\API\obj\Debug\net10.0\API.pdb
 D:\CargoPin\Backend\API\obj\Debug\net10.0\API.genruntimeconfig.cache
 D:\CargoPin\Backend\API\obj\Debug\net10.0\ref\API.dll
+D:\CargoPin\Backend\API\bin\Debug\net10.0\Resend.dll

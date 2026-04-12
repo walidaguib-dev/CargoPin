@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Users.Commands;
 using Application.Users.Dtos;
+using Application.Users.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Routes
 {
@@ -12,7 +14,7 @@ namespace API.Routes
     {
         public static void MapAuthEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/auth").WithTags("Authentication");
+            var group = app.MapGroup("/api/auth").WithTags("Auth");
 
             group.MapPost(
                 "/register",
@@ -46,6 +48,27 @@ namespace API.Routes
                     }
                 )
                 .RequireAuthorization();
+
+            group.MapDelete(
+                "All",
+                async (ISender sender) =>
+                {
+                    var result = await sender.Send(new DeleteAllUsersCommand());
+                    return result == null ? Results.Ok("No Users!") : Results.NoContent();
+                }
+            );
+
+            group.MapGet(
+                "confirm-email",
+                async ([FromQuery] string userId, [FromQuery] string token, ISender sender) =>
+                {
+                    var query = new ConfirmEmailQuery(userId, token);
+                    var result = await sender.Send(query);
+                    return result is null
+                        ? Results.BadRequest("user not found!")
+                        : Results.Redirect("http://localhost:5005/");
+                }
+            );
         }
     }
 }

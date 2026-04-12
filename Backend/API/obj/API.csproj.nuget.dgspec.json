@@ -1367,6 +1367,10 @@
               "target": "Package",
               "version": "[10.0.0, )"
             },
+            "Resend": {
+              "target": "Package",
+              "version": "[0.3.0, )"
+            },
             "ZiggyCreatures.FusionCache": {
               "target": "Package",
               "version": "[2.5.0, )"

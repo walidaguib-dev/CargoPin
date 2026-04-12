@@ -6,6 +6,11 @@ services:
     ports:
       - "5005:5005"
     environment:
+      Smtp__Host: ${Smtp__Host}
+      Smtp__Port: ${Smtp__Port}
+      Smtp__UserName: ${Smtp__UserName}
+      Smtp__Password: ${Smtp__Password}
+      Smtp__From: ${Smtp__From}
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Default: ${ConnectionStrings__Default}
       JWT__Issuer: ${JWT__Issuer}
@@ -17,6 +22,7 @@ services:
       CloudinarySettings__CloudName: ${CloudinarySettings__CloudName}
       CloudinarySettings__ApiKey: ${CloudinarySettings__ApiKey}
       CloudinarySettings__ApiSecret: ${CloudinarySettings__ApiSecret}
+
     depends_on:
       db:
         condition: service_healthy

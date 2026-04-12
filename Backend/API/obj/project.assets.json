@@ -991,6 +991,19 @@
           }
         }
       },
+      "Resend/0.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/Resend.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Resend.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Scalar.AspNetCore/2.12.34": {
         "type": "package",
         "compile": {
@@ -1481,6 +1494,7 @@
           "Microsoft.Extensions.Caching.StackExchangeRedis": "10.0.2",
           "Npgsql": "10.0.1",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.0",
+          "Resend": "0.3.0",
           "ZiggyCreatures.FusionCache": "2.5.0",
           "ZiggyCreatures.FusionCache.Serialization.SystemTextJson": "2.5.0"
         },
@@ -3753,6 +3767,21 @@
         "lib/netstandard2.1/Pipelines.Sockets.Unofficial.xml",
         "pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
         "pipelines.sockets.unofficial.nuspec"
+      ]
+    },
+    "Resend/0.3.0": {
+      "sha512": "3MiS6JaevFdCdg61e55DrH7BD1DzlfmHv8SvKFuiTF8y0DGl8fSt0TREgIJRwXx2x8qPKBcl4qIqDfm/slnYyw==",
+      "type": "package",
+      "path": "resend/0.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "icon.png",
+        "lib/net8.0/Resend.dll",
+        "lib/net8.0/Resend.xml",
+        "resend.0.3.0.nupkg.sha512",
+        "resend.nuspec"
       ]
     },
     "Scalar.AspNetCore/2.12.34": {
