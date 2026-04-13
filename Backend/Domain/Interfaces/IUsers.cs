@@ -13,6 +13,7 @@ namespace Domain.Interfaces
         public Task<User?> SignIn(SignInRequest signInRequest);
         public Task<User?> ResetPassword(PasswordResetRequest resetRequest);
         public Task<object?> ConfirmEmailAsync(string userId, string token);
+        public Task<User?> ForgetPasswordReset(ForgetPasswordRequest request);
 
         //for testing
         public Task<bool?> DeleteAll();

@@ -1,4 +1,5 @@
 // Infrastructure/Repositories/OutboxEmailRepository.cs
+using System.Text;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Helpers;
@@ -7,10 +8,14 @@ using Domain.Requests.Emails;
 using FluentEmail.Core;
 using Hangfire;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
     public class OutboxEmailRepository(
+        UserManager<User> _userManager,
         ApplicationDbContext _context,
         IFluentEmail _fluentEmail,
         IBackgroundJobClient _jobClient
@@ -19,16 +24,23 @@ namespace Infrastructure.Repositories
         public async Task<OutboxEmail> CreateAndSendAsync(EmailCreationRequest request)
         {
             var type = ParseEmailType(request.Type);
+            var token = "";
 
+            // generate token BEFORE building HtmlBody
+            if (type == EmailType.PasswordReset)
+            {
+                var user = await _userManager.Users.FirstAsync(x => x.Id == request.UserId);
+                var rawToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                token = rawToken;
+            }
             var outbox = new OutboxEmail
             {
                 To = request.To,
                 Subject = request.Subject,
-                HtmlBody = EmailHtmlBuilder.HtmlBody(type, request.Token, request.UserId),
+                HtmlBody = EmailHtmlBuilder.HtmlBody(type, token, request.UserId), // ✅ token is ready
                 Type = type,
-                Token = request.Token,
+                Token = token,
                 UserId = request.UserId,
-
                 CreatedAt = DateTime.UtcNow,
             };
 

@@ -11,6 +11,7 @@ namespace API.Routes.Extensions
         {
             app.MapAuthEndpoints();
             app.MapTokensEndpoints();
+            app.MapMailEndpoints();
         }
     }
 }

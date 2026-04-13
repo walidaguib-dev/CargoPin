@@ -91,6 +91,26 @@ namespace Infrastructure.Repositories
             return affectedRows == 0 ? null : true;
         }
 
+        public async Task<User?> ForgetPasswordReset(ForgetPasswordRequest request)
+        {
+            var user =
+                await userManager.Users.FirstOrDefaultAsync(x => x.Email == request.Email)
+                ?? throw new InvalidOperationException("User not found!");
+
+            var result = await userManager.ResetPasswordAsync(
+                user,
+                request.Token,
+                request.New_password
+            );
+
+            if (!result.Succeeded)
+            {
+                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+
+            return user;
+        }
+
         public async Task<User?> ResetPassword(PasswordResetRequest resetRequest)
         {
             var user = await userManager.FindByIdAsync(resetRequest.UserId);

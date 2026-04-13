@@ -7,6 +7,7 @@ using Application.Users.Dtos;
 using Application.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using StackExchange.Redis;
 
 namespace API.Routes
 {
@@ -67,6 +68,16 @@ namespace API.Routes
                     return result is null
                         ? Results.BadRequest("user not found!")
                         : Results.Redirect("http://localhost:5005/");
+                }
+            );
+
+            group.MapPost(
+                "forget-password",
+                async (ISender sender, [FromBody] ForgetPasswordDto dto) =>
+                {
+                    var command = new ForgetPasswordCommand(dto);
+                    var result = await sender.Send(command);
+                    return result == null ? Results.Ok("No Users!") : Results.NoContent();
                 }
             );
         }

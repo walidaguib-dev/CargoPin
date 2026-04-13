@@ -20,6 +20,7 @@ namespace Application.Emails.Handlers
         )
         {
             var emailRequest = request.Dto.MapToRequest();
+
             return await outboxEmailService.CreateAndSendAsync(emailRequest);
         }
     }

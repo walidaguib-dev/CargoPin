@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Application.Emails.Dtos;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Helpers;
 using Domain.Requests.Emails;
 
 namespace Application.Emails
@@ -30,9 +31,12 @@ namespace Application.Emails
 
         public static EmailCreationRequest MapToRequest(this EmailCreationDto dto)
         {
+            var type = Enum.TryParse<EmailType>(dto.Type, ignoreCase: true, out var result)
+                ? result
+                : EmailType.Welcome;
             return new EmailCreationRequest
             {
-                HtmlBody = dto.HtmlBody,
+                HtmlBody = EmailHtmlBuilder.HtmlBody(type, dto.Token, dto.UserId),
                 Subject = dto.Subject,
                 To = dto.To,
                 Token = dto.Token,
