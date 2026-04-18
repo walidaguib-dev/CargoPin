@@ -6,8 +6,10 @@ using Hangfire;
 using Infrastructure;
 using Infrastructure.Data;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -44,7 +46,9 @@ builder.Services.AddLoggingConfiguration(builder.Configuration);
 builder.Services.GetApplicationServices();
 builder.Services.AddAPIServices();
 builder.Services.AddValidations();
-builder.Services.AddIdentityServices();
+builder.Services.ConfigureGraphQL();
+
+// builder.Services.AddIdentityServices();
 builder.Services.ConfigureCloudinary(builder);
 builder.Services.ConfigureRedisServices(builder.Configuration);
 builder.Services.AddDatabase(builder.Configuration);
@@ -109,4 +113,5 @@ app.UseAuthorization();
 app.UseSerilogRequestLogging();
 app.GetApiEndpoints();
 app.UseHangfireDashboard("/hangfire", new DashboardOptions { Authorization = [new JobsAuth()] });
+app.MapGraphQL();
 app.Run();

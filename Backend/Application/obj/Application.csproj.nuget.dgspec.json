@@ -55,6 +55,18 @@
               "target": "Package",
               "version": "[12.1.1, )"
             },
+            "HotChocolate.AspNetCore": {
+              "target": "Package",
+              "version": "[15.1.14, )"
+            },
+            "HotChocolate.Data": {
+              "target": "Package",
+              "version": "[15.1.14, )"
+            },
+            "HotChocolate.Data.EntityFramework": {
+              "target": "Package",
+              "version": "[15.1.14, )"
+            },
             "MediatR": {
               "target": "Package",
               "version": "[14.0.0, )"

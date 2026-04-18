@@ -21,7 +21,7 @@ namespace Application.Emails
             {
                 Subject = dto.Subject,
                 To = dto.To,
-                Type = Type,
+                Type = type,
                 HtmlBody = dto.HtmlBody,
                 Token = dto.Token,
                 UserId = dto.UserId,

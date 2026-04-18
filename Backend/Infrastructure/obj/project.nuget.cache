@@ -103,5 +103,30 @@
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\ziggycreatures.fusioncache\\2.5.0\\ziggycreatures.fusioncache.2.5.0.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\ziggycreatures.fusioncache.serialization.systemtextjson\\2.5.0\\ziggycreatures.fusioncache.serialization.systemtextjson.2.5.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx",
+      "projectPath": "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj",
+      "warningLevel": 1,
+      "filePath": "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj",
+      "libraryId": "System.Security.Cryptography.Xml",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf",
+      "projectPath": "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj",
+      "warningLevel": 1,
+      "filePath": "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj",
+      "libraryId": "System.Security.Cryptography.Xml",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
 }

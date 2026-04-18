@@ -55,6 +55,22 @@
               "target": "Package",
               "version": "[12.1.1, )"
             },
+            "HotChocolate": {
+              "target": "Package",
+              "version": "[15.1.14, )"
+            },
+            "HotChocolate.AspNetCore": {
+              "target": "Package",
+              "version": "[15.1.14, )"
+            },
+            "HotChocolate.Data": {
+              "target": "Package",
+              "version": "[15.1.14, )"
+            },
+            "HotChocolate.Data.EntityFramework": {
+              "target": "Package",
+              "version": "[15.1.14, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[10.0.2, )"
@@ -592,6 +608,18 @@
             "FluentValidation.DependencyInjectionExtensions": {
               "target": "Package",
               "version": "[12.1.1, )"
+            },
+            "HotChocolate.AspNetCore": {
+              "target": "Package",
+              "version": "[15.1.14, )"
+            },
+            "HotChocolate.Data": {
+              "target": "Package",
+              "version": "[15.1.14, )"
+            },
+            "HotChocolate.Data.EntityFramework": {
+              "target": "Package",
+              "version": "[15.1.14, )"
             },
             "MediatR": {
               "target": "Package",
