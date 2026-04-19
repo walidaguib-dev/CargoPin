@@ -609,6 +609,10 @@
               "target": "Package",
               "version": "[12.1.1, )"
             },
+            "HotChocolate": {
+              "target": "Package",
+              "version": "[15.1.14, )"
+            },
             "HotChocolate.AspNetCore": {
               "target": "Package",
               "version": "[15.1.14, )"

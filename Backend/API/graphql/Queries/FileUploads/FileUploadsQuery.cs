@@ -1,27 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.FileUploads.Dtos;
 using Infrastructure.Data;
-using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.graphql.Queries.FileUploads
 {
     [ExtendObjectType(OperationTypeNames.Query)]
     public class FileUploadsQuery
     {
-        [UsePaging] // ✅ 1. Paging FIRST
-        [UseProjection] // ✅ 2. Projection SECOND
-        [UseFiltering] // ✅ 3. Filtering THIRD
-        [UseSorting]
+        [UsePaging] // 1️⃣ Paging FIRST
+        [UseProjection] // 2️⃣ Projection SECOND
+        [UseFiltering] // 3️⃣ Filtering THIRD
+        [UseSorting] // 4️⃣ Sorting LAST
         public IQueryable<Domain.Entities.FileUploads> GetAllFilesByUserQuery(
             string userId,
             [Service] ApplicationDbContext dbContext
         )
         {
-            var result = dbContext.FileUploads.Where(x => x.UserId == userId).AsQueryable();
-            return result;
+            return dbContext
+                .FileUploads.AsNoTracking()
+                .Where(x => x.UserId == userId)
+                .AsQueryable();
+        }
+
+        public async Task<Domain.Entities.FileUploads?> GetUploadByUser(
+            string userId,
+            [Service] ApplicationDbContext dbContext
+        )
+        {
+            return await dbContext
+                .FileUploads.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.UserId == userId);
         }
     }
 }

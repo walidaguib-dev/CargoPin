@@ -14,13 +14,14 @@ namespace API.Services
             services.AddScoped<ITokens, TokensRepository>();
             services.AddScoped<IOutboxEmail, OutboxEmailRepository>();
             services.AddScoped<IFileUploads, FileUploadsRepository>();
+            services.AddScoped<ICaching, CachingRepository>();
 
             // pipelines services
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-            // services.AddTransient(
-            //     typeof(IPipelineBehavior<,>),
-            //     typeof(CacheInvalidationBehavior<,>)
-            // );
+            services.AddTransient(
+                typeof(IPipelineBehavior<,>),
+                typeof(CacheInvalidationBehavior<,>)
+            );
 
             // Register API services here
             return services;

@@ -4842,6 +4842,7 @@
     "net10.0": [
       "Domain >= 1.0.0",
       "FluentValidation.DependencyInjectionExtensions >= 12.1.1",
+      "HotChocolate >= 15.1.14",
       "HotChocolate.AspNetCore >= 15.1.14",
       "HotChocolate.Data >= 15.1.14",
       "HotChocolate.Data.EntityFramework >= 15.1.14",
@@ -4902,6 +4903,10 @@
           "FluentValidation.DependencyInjectionExtensions": {
             "target": "Package",
             "version": "[12.1.1, )"
+          },
+          "HotChocolate": {
+            "target": "Package",
+            "version": "[15.1.14, )"
           },
           "HotChocolate.AspNetCore": {
             "target": "Package",
