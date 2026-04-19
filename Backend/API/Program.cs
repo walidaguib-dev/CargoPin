@@ -100,8 +100,6 @@ using (var scope = app.Services.CreateScope())
 
 app.SetupDocumentation();
 
-app.UseCors("AllowAll");
-
 app.UseResponseCompression();
 app.UseHttpsRedirection();
 
