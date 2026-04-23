@@ -12,11 +12,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class FileUploadsRepository(Cloudinary cloudinaryService, ApplicationDbContext context)
-        : IFileUploads
+    public class FileUploadsRepository(
+        Cloudinary cloudinaryService,
+        ApplicationDbContext context,
+        ICaching cachingService
+    ) : IFileUploads
     {
         private readonly Cloudinary _cloudinaryService = cloudinaryService;
         private readonly ApplicationDbContext _context = context;
+        private readonly ICaching _cachingService = cachingService;
 
         public async Task<bool?> DeleteUploadAsync(string publicId)
         {
@@ -30,6 +34,43 @@ namespace Infrastructure.Repositories
             _context.FileUploads.Remove(file!);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IQueryable<FileUploads>> GetAllFilesByUserAsync(string userId)
+        {
+            var key = $"user_uploads_{userId}";
+            var files = await _cachingService.GetOrSetAsync(
+                $"files:user:{userId}",
+                async ct =>
+                    await _context
+                        .FileUploads.AsNoTracking()
+                        .Include(x => x.User)
+                        .Where(x => x.UserId == userId)
+                        .ToListAsync(ct),
+                TimeSpan.FromMinutes(10),
+                tags: [$"user_uploads"]
+            );
+
+            return (files ?? []).AsQueryable();
+        }
+
+        public async Task<FileUploads?> GetUploadByUserAsync(string userId)
+        {
+            var key = $"user_upload_{userId}";
+            var result = await _cachingService.GetOrSetAsync(
+                key,
+                async token =>
+                {
+                    return await _context
+                        .FileUploads.AsNoTracking()
+                        .Include(x => x.User)
+                        .Where(x => x.UserId == userId)
+                        .FirstAsync();
+                },
+                TimeSpan.FromMinutes(10),
+                ["user_upload"]
+            );
+            return result!;
         }
 
         public async Task<bool?> UpdateAsync(string userId, IFormFile newfile, string oldPublicId)

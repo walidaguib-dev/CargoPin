@@ -58,7 +58,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddRateLimitingServices();
 builder.Services.AddFusionCache(builder.Configuration);
 builder.Services.AddSignalR();
-builder.Services.SetupResponseCompression();
 builder.Services.ConfigureResend(builder.Configuration);
 
 builder.Host.UseSerilog();
@@ -100,7 +99,6 @@ using (var scope = app.Services.CreateScope())
 
 app.SetupDocumentation();
 
-app.UseResponseCompression();
 app.UseHttpsRedirection();
 
 app.UseGlobalExceptionHandling(app.Environment);

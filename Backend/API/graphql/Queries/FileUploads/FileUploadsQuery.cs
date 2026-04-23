@@ -1,4 +1,6 @@
+using Application.FileUploads.Queries;
 using Infrastructure.Data;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.graphql.Queries.FileUploads
@@ -10,25 +12,24 @@ namespace API.graphql.Queries.FileUploads
         [UseProjection] // 2️⃣ Projection SECOND
         [UseFiltering] // 3️⃣ Filtering THIRD
         [UseSorting] // 4️⃣ Sorting LAST
-        public IQueryable<Domain.Entities.FileUploads> GetAllFilesByUserQuery(
+        public async Task<IQueryable<Domain.Entities.FileUploads>> GetAllFilesByUserQuery(
             string userId,
-            [Service] ApplicationDbContext dbContext
+            [Service] IMediator mediator
         )
         {
-            return dbContext
-                .FileUploads.AsNoTracking()
-                .Where(x => x.UserId == userId)
-                .AsQueryable();
+            var query = new GetUserUploadsQuery(userId);
+            var result = await mediator.Send(query);
+            return result;
         }
 
         public async Task<Domain.Entities.FileUploads?> GetUploadByUser(
             string userId,
-            [Service] ApplicationDbContext dbContext
+            [Service] IMediator mediator
         )
         {
-            return await dbContext
-                .FileUploads.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.UserId == userId);
+            var query = new GetUserUploadQuery(userId);
+            var result = await mediator.Send(query);
+            return result;
         }
     }
 }

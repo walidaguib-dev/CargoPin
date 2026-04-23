@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "pshfOPV6VHI=",
+  "dgSpecHash": "3mWCijq0BE8=",
   "success": true,
   "projectFilePath": "D:\\CargoPin\\Backend\\API\\API.csproj",
   "expectedPackageFiles": [
@@ -62,7 +62,6 @@
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.2\\microsoft.aspnetcore.authentication.jwtbearer.10.0.2.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\10.0.2\\microsoft.aspnetcore.identity.entityframeworkcore.10.0.2.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.2\\microsoft.aspnetcore.openapi.10.0.2.nupkg.sha512",
-    "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.responsecompression\\2.3.9\\microsoft.aspnetcore.responsecompression.2.3.9.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.11.0\\microsoft.codeanalysis.analyzers.3.11.0.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.codeanalysis.common\\5.0.0\\microsoft.codeanalysis.common.5.0.0.nupkg.sha512",
@@ -122,18 +121,5 @@
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\ziggycreatures.fusioncache\\2.5.0\\ziggycreatures.fusioncache.2.5.0.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\ziggycreatures.fusioncache.serialization.systemtextjson\\2.5.0\\ziggycreatures.fusioncache.serialization.systemtextjson.2.5.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1510",
-      "level": "Warning",
-      "message": "PackageReference Microsoft.AspNetCore.ResponseCompression will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "D:\\CargoPin\\Backend\\API\\API.csproj",
-      "warningLevel": 1,
-      "filePath": "D:\\CargoPin\\Backend\\API\\API.csproj",
-      "libraryId": "Microsoft.AspNetCore.ResponseCompression",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  "logs": []
 }

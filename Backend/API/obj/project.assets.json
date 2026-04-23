@@ -1000,19 +1000,6 @@
           "build/Microsoft.AspNetCore.OpenApi.targets": {}
         }
       },
-      "Microsoft.AspNetCore.ResponseCompression/2.3.9": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/_._": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/_._": {
-            "related": ".xml"
-          }
-        }
-      },
       "Microsoft.Build.Framework/18.0.2": {
         "type": "package",
         "compile": {
@@ -3387,21 +3374,6 @@
         "lib/net10.0/Microsoft.AspNetCore.OpenApi.xml",
         "microsoft.aspnetcore.openapi.10.0.2.nupkg.sha512",
         "microsoft.aspnetcore.openapi.nuspec"
-      ]
-    },
-    "Microsoft.AspNetCore.ResponseCompression/2.3.9": {
-      "sha512": "KlU4oh7qRmDJAZX6rRw/tgJndmCfM8X0AuSyo8aKzTMSiGjpRoVItKS7x8CFFvglypOQ4is6Xs1YqpnrqYQZUg==",
-      "type": "package",
-      "path": "microsoft.aspnetcore.responsecompression/2.3.9",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net462/Microsoft.AspNetCore.ResponseCompression.dll",
-        "lib/net462/Microsoft.AspNetCore.ResponseCompression.xml",
-        "lib/netstandard2.0/Microsoft.AspNetCore.ResponseCompression.dll",
-        "lib/netstandard2.0/Microsoft.AspNetCore.ResponseCompression.xml",
-        "microsoft.aspnetcore.responsecompression.2.3.9.nupkg.sha512",
-        "microsoft.aspnetcore.responsecompression.nuspec"
       ]
     },
     "Microsoft.Build.Framework/18.0.2": {
@@ -5925,7 +5897,6 @@
       "HotChocolate.Data.EntityFramework >= 15.1.14",
       "Infrastructure >= 1.0.0",
       "Microsoft.AspNetCore.OpenApi >= 10.0.2",
-      "Microsoft.AspNetCore.ResponseCompression >= 2.3.9",
       "Microsoft.EntityFrameworkCore.Design >= 10.0.2",
       "Microsoft.VisualStudio.Azure.Containers.Tools.Targets >= 1.23.0",
       "Scalar.AspNetCore >= 2.12.34",
@@ -6011,10 +5982,6 @@
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[10.0.2, )"
-          },
-          "Microsoft.AspNetCore.ResponseCompression": {
-            "target": "Package",
-            "version": "[2.3.9, )"
           },
           "Microsoft.EntityFrameworkCore.Design": {
             "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
@@ -6494,17 +6461,5 @@
         }
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1510",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "PackageReference Microsoft.AspNetCore.ResponseCompression will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "libraryId": "Microsoft.AspNetCore.ResponseCompression",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  }
 }

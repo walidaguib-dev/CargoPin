@@ -1498,6 +1498,7 @@
         "dependencies": {
           "Domain": "1.0.0",
           "FluentValidation.DependencyInjectionExtensions": "12.1.1",
+          "HotChocolate": "15.1.14",
           "HotChocolate.AspNetCore": "15.1.14",
           "HotChocolate.Data": "15.1.14",
           "HotChocolate.Data.EntityFramework": "15.1.14",

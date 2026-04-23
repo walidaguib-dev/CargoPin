@@ -13,5 +13,7 @@ namespace Domain.Interfaces
         public Task<FileUploads> UploadsAsync(string userId, IFormFile file);
         public Task<bool?> DeleteUploadAsync(string publicId);
         public Task<bool?> UpdateAsync(string userId, IFormFile file, string oldPublicId);
+        public Task<IQueryable<FileUploads>> GetAllFilesByUserAsync(string userId);
+        public Task<FileUploads?> GetUploadByUserAsync(string userId);
     }
 }
