@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using API.graphql.Queries.FileUploads;
+using API.graphql.Queries;
 using HotChocolate.Execution.Configuration;
 
 namespace API.graphql.Queries
@@ -13,6 +13,7 @@ namespace API.graphql.Queries
         {
             request.AddQueryType<Query>();
             request.AddTypeExtension<FileUploadsQuery>();
+            request.AddTypeExtension<ProfileQueries>();
         }
     }
 }

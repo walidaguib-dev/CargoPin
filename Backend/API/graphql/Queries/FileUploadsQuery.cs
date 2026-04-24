@@ -3,7 +3,7 @@ using Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.graphql.Queries.FileUploads
+namespace API.graphql.Queries
 {
     [ExtendObjectType(OperationTypeNames.Query)]
     public class FileUploadsQuery

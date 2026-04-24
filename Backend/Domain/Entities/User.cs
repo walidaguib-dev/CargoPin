@@ -10,5 +10,6 @@ namespace Domain.Entities
     {
         public RefreshToken refreshTokens { get; set; } = null!;
         public List<OutboxEmail> OutboxEmails { get; set; } = [];
+        public Profile? Profile { get; set; }
     }
 }

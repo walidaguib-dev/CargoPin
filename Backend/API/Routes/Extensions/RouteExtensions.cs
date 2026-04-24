@@ -13,6 +13,7 @@ namespace API.Routes.Extensions
             app.MapTokensEndpoints();
             app.MapMailEndpoints();
             app.MapFileUploadsEndpoints();
+            app.MapProfileEndpoints();
         }
     }
 }

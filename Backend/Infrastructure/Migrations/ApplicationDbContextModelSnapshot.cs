@@ -99,6 +99,49 @@ namespace Infrastructure.Migrations
                     b.ToTable("OutboxEmails");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Profile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("UploadId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UploadId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Profiles");
+                });
+
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
@@ -366,6 +409,23 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Profile", b =>
+                {
+                    b.HasOne("Domain.Entities.FileUploads", "Upload")
+                        .WithOne("Profile")
+                        .HasForeignKey("Domain.Entities.Profile", "UploadId");
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithOne("Profile")
+                        .HasForeignKey("Domain.Entities.Profile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Upload");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
@@ -428,9 +488,16 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Entities.FileUploads", b =>
+                {
+                    b.Navigation("Profile");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("OutboxEmails");
+
+                    b.Navigation("Profile");
 
                     b.Navigation("refreshTokens")
                         .IsRequired();

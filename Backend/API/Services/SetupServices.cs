@@ -15,6 +15,7 @@ namespace API.Services
             services.AddScoped<IOutboxEmail, OutboxEmailRepository>();
             services.AddScoped<IFileUploads, FileUploadsRepository>();
             services.AddScoped<ICaching, CachingRepository>();
+            services.AddScoped<IProfile, ProfilesRepository>();
 
             // pipelines services
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

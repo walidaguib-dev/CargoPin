@@ -17,6 +17,7 @@ namespace Infrastructure.Data
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<OutboxEmail> OutboxEmails { get; set; }
         public DbSet<FileUploads> FileUploads { get; set; }
+        public DbSet<Profile> Profiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
