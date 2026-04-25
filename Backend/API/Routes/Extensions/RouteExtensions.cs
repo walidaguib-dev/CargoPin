@@ -14,6 +14,7 @@ namespace API.Routes.Extensions
             app.MapMailEndpoints();
             app.MapFileUploadsEndpoints();
             app.MapProfileEndpoints();
+            app.MapVesselsEndpoints();
         }
     }
 }
