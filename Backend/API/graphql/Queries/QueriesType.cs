@@ -15,6 +15,7 @@ namespace API.graphql.Queries
             request.AddTypeExtension<FileUploadsQuery>();
             request.AddTypeExtension<ProfileQueries>();
             request.AddTypeExtension<VesselsQuery>();
+            request.AddTypeExtension<MerchandisesQuery>();
         }
     }
 }

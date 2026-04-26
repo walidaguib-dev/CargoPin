@@ -19,6 +19,7 @@ namespace Infrastructure.Data
         public DbSet<FileUploads> FileUploads { get; set; }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Vessel> Vessels { get; set; }
+        public DbSet<Merchandise> Merchandises { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

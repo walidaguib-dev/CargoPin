@@ -59,6 +59,35 @@ namespace Infrastructure.Migrations
                     b.ToTable("FileUploads");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Merchandise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CargoType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("NumberOfHeat")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("Weight")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Merchandises");
+                });
+
             modelBuilder.Entity("Domain.Entities.OutboxEmail", b =>
                 {
                     b.Property<int>("Id")
