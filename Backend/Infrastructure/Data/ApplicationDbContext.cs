@@ -20,6 +20,8 @@ namespace Infrastructure.Data
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Vessel> Vessels { get; set; }
         public DbSet<Merchandise> Merchandises { get; set; }
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<Zone> Zones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

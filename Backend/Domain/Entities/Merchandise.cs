@@ -14,5 +14,7 @@ namespace Domain.Entities
         public decimal? Weight { get; set; }
         public int? NumberOfHeat { get; set; } // specific to steel coils
         public string? Note { get; set; }
+
+        public List<Client> Clients { get; set; } = [];
     }
 }

@@ -22,6 +22,46 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Entities.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ArrivalDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.PrimitiveCollection<string[]>("BLNumbers")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<int>("MerchandiseId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VesselId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MerchandiseId");
+
+                    b.HasIndex("VesselId");
+
+                    b.ToTable("Clients");
+                });
+
             modelBuilder.Entity("Domain.Entities.FileUploads", b =>
                 {
                     b.Property<int>("Id")
@@ -297,6 +337,36 @@ namespace Infrastructure.Migrations
                     b.ToTable("Vessels");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Zone", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Zones");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -445,6 +515,25 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Client", b =>
+                {
+                    b.HasOne("Domain.Entities.Merchandise", "Merchandise")
+                        .WithMany("Clients")
+                        .HasForeignKey("MerchandiseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Vessel", "Vessel")
+                        .WithMany("Clients")
+                        .HasForeignKey("VesselId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Merchandise");
+
+                    b.Navigation("Vessel");
+                });
+
             modelBuilder.Entity("Domain.Entities.FileUploads", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
@@ -551,6 +640,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Profile");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Merchandise", b =>
+                {
+                    b.Navigation("Clients");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("OutboxEmails");
@@ -559,6 +653,11 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("refreshTokens")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Vessel", b =>
+                {
+                    b.Navigation("Clients");
                 });
 #pragma warning restore 612, 618
         }
