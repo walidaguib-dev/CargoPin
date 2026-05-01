@@ -16,3 +16,4 @@ D:\CargoPin\Backend\Application\obj\Debug\net10.0\Application.dll
 D:\CargoPin\Backend\Application\obj\Debug\net10.0\refint\Application.dll
 D:\CargoPin\Backend\Application\obj\Debug\net10.0\Application.pdb
 D:\CargoPin\Backend\Application\obj\Debug\net10.0\ref\Application.dll
+D:\CargoPin\Backend\Application\obj\Debug\net10.0\EFCoreNpgsqlNetTopologySuite.cs

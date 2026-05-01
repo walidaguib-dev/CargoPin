@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.graphql.Queries;
+using API.graphql.Types;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,7 @@ namespace API.Services
                 .AddSorting()
                 .AddFiltering()
                 .AddPagingArguments()
+                .AddType<AreaType>()
                 .AddQueryTypes();
         }
     }

@@ -19,7 +19,10 @@ namespace Infrastructure.Data
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("Default"));
+            optionsBuilder.UseNpgsql(
+                "Host=localhost;Port=5432;Database=CargoPin;Username=postgres;Password=postgres",
+                o => o.UseNetTopologySuite()
+            );
 
             return new ApplicationDbContext(optionsBuilder.Options);
         }

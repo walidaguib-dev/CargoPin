@@ -22,6 +22,7 @@ namespace Infrastructure.Data
         public DbSet<Merchandise> Merchandises { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Zone> Zones { get; set; }
+        public DbSet<Area> Areas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

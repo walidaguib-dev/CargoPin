@@ -12,5 +12,6 @@
       Version="10.0.2"
     />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.2" />
+    <PackageReference Include="NetTopologySuite" Version="2.6.0" />
   </ItemGroup>
 </Project>

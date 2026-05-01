@@ -22,7 +22,7 @@ namespace API.Routes
                     {
                         var command = new CreateClientCommand(dto);
                         var result = await sender.Send(command);
-                        return result;
+                        return Results.Created();
                     }
                 )
                 .RequireAuthorization();

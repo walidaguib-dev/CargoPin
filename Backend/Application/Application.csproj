@@ -12,6 +12,8 @@
     <PackageReference Include="HotChocolate.Data" Version="15.1.14" />
     <PackageReference Include="HotChocolate.Data.EntityFramework" Version="15.1.14" />
     <PackageReference Include="MediatR" Version="14.0.0" />
+    <PackageReference Include="NetTopologySuite" Version="2.6.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="10.0.1" />
 
   </ItemGroup>
 
