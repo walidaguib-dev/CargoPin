@@ -13,6 +13,13 @@ namespace Infrastructure.Data.Config
         public void Configure(EntityTypeBuilder<Zone> builder)
         {
             builder.Property(x => x.Type).HasConversion<string>().IsRequired();
+
+            builder
+                .Property(x => x.Boundary)
+                .HasColumnType("geometry(Polygon, 4326)")
+                .IsRequired(false);
+
+            builder.HasIndex(x => x.Boundary).HasMethod("GIST");
         }
     }
 }

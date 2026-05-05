@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.graphql.Queries;
 using API.graphql.Types;
+using API.graphql.Types.Areas;
+using API.graphql.Types.Zones;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +23,7 @@ namespace API.Services
                 .AddFiltering()
                 .AddPagingArguments()
                 .AddType<AreaType>()
+                .AddType<ZoneType>()
                 .AddQueryTypes();
         }
     }

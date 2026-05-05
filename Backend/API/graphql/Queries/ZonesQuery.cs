@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using API.graphql.Types.Zones;
 using Application.Zones.Queries;
 using Domain.Entities;
 using MediatR;
@@ -11,10 +8,9 @@ namespace API.graphql.Queries
     [ExtendObjectType(OperationTypeNames.Query)]
     public class ZonesQuery
     {
-        [UsePaging] // 1️⃣ Paging FIRST
-        [UseProjection] // 2️⃣ Projection SECOND
-        [UseFiltering] // 3️⃣ Filtering THIRD
-        [UseSorting] // 4️⃣ Sorting LAST
+        [UsePaging]
+        [UseFiltering(typeof(ZoneFilterType))]
+        [UseSorting(typeof(ZoneSortType))]
         public async Task<IQueryable<Zone>> GetZones([Service] ISender sender)
         {
             var query = new GetZonesQuery();

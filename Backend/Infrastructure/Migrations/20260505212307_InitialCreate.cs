@@ -150,6 +150,7 @@ namespace Infrastructure.Migrations
                     Type = table.Column<int>(type: "integer", nullable: false),
                     Notes = table.Column<string>(type: "text", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    Boundary = table.Column<Geometry>(type: "geometry", nullable: true),
                 },
                 constraints: table =>
                 {

@@ -1,11 +1,11 @@
 using Domain.Entities;
 using Domain.Helpers;
 
-namespace API.graphql.Types
+namespace API.graphql.Types.Zones
 {
-    public class AreaType : ObjectType<Area>
+    public class ZoneType : ObjectType<Zone>
     {
-        protected override void Configure(IObjectTypeDescriptor<Area> descriptor)
+        protected override void Configure(IObjectTypeDescriptor<Zone> descriptor)
         {
             descriptor.Field(x => x.Boundary).Ignore();
 
@@ -14,10 +14,10 @@ namespace API.graphql.Types
                 .Type<ListType<ObjectType<BoundaryCoordinate>>>()
                 .Resolve(ctx =>
                 {
-                    var area = ctx.Parent<Area>();
-                    if (area.Boundary == null)
+                    var zone = ctx.Parent<Zone>();
+                    if (zone.Boundary == null)
                         return null;
-                    return area
+                    return zone
                         .Boundary.Coordinates.Select(c => new BoundaryCoordinate
                         {
                             Latitude = c.Y,

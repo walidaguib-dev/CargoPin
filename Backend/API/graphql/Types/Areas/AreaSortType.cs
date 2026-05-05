@@ -1,7 +1,7 @@
 using Domain.Entities;
 using HotChocolate.Data.Sorting;
 
-namespace API.graphql.Types
+namespace API.graphql.Types.Areas
 {
     public class AreaSortType : SortInputType<Area>
     {

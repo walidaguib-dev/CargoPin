@@ -1,4 +1,4 @@
-using API.graphql.Types;
+using API.graphql.Types.Areas;
 using Application.Areas.Queries;
 using Domain.Entities;
 using MediatR;

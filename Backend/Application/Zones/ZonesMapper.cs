@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Zones.Dtos;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Helpers;
 using Domain.Requests.Zones;
 
 namespace Application.Zones
@@ -23,6 +20,10 @@ namespace Application.Zones
                 Notes = dto.Notes,
                 IsActive = dto.IsActive,
                 Type = zoneType,
+                Boundary =
+                    dto.Boundary != null && dto.Boundary.Any()
+                        ? GeometryHelper.ToPolygon(dto.Boundary)
+                        : null,
             };
         }
 
@@ -35,6 +36,7 @@ namespace Application.Zones
                 Notes = dto.Notes,
                 IsActive = dto.IsActive,
                 Type = dto.Type,
+                Boundary = dto.Boundary,
             };
         }
     }

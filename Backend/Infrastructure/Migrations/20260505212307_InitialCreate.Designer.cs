@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260430232130_InitialCreate")]
+    [Migration("20260505212307_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -388,6 +388,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Geometry>("Boundary")
+                        .HasColumnType("geometry");
 
                     b.Property<string>("Code")
                         .IsRequired()

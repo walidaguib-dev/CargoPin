@@ -1,7 +1,7 @@
 using Domain.Entities;
 using HotChocolate.Data.Filters;
 
-namespace API.graphql.Types
+namespace API.graphql.Types.Areas
 {
     public class AreaFilterType : FilterInputType<Area>
     {

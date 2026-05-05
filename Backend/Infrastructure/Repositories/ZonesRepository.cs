@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Helpers;
 using Domain.Interfaces;
 using Domain.Requests.Zones;
 using Infrastructure.Data;
@@ -61,19 +58,22 @@ namespace Infrastructure.Repositories
 
         public async Task<bool?> UpdateAsync(int Id, UpdateZoneRequest request)
         {
-            var zoneType = Enum.TryParse<ZoneType>(request.Type, true, out var type)
+            var zone = await _context.Zones.FindAsync(Id);
+            if (zone == null) return null;
+
+            zone.Name = request.Name;
+            zone.Code = request.Code;
+            zone.IsActive = request.IsActive;
+            zone.Notes = request.Notes;
+            zone.Type = Enum.TryParse<ZoneType>(request.Type, true, out var type)
                 ? type
                 : ZoneType.OpenYard;
-            var result = await _context
-                .Zones.Where(x => x.Id == Id)
-                .ExecuteUpdateAsync(p =>
-                    p.SetProperty(x => x.Name, request.Name)
-                        .SetProperty(x => x.Code, request.Code)
-                        .SetProperty(x => x.IsActive, request.IsActive)
-                        .SetProperty(x => x.Notes, request.Notes)
-                        .SetProperty(x => x.Type, zoneType)
-                );
-            return result is 0 ? null : true;
+
+            if (request.Boundary != null && request.Boundary.Any())
+                zone.Boundary = GeometryHelper.ToPolygon(request.Boundary);
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
