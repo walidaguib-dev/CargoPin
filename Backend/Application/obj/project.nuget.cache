@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "mccEQgIO1cs=",
+  "dgSpecHash": "5IzoIG/rw1c=",
   "success": true,
   "projectFilePath": "D:\\CargoPin\\Backend\\Application\\Application.csproj",
   "expectedPackageFiles": [
@@ -62,6 +62,7 @@
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.3.0\\microsoft.aspnetcore.authentication.abstractions.2.3.0.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.authentication.cookies\\2.3.0\\microsoft.aspnetcore.authentication.cookies.2.3.0.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.authentication.core\\2.3.0\\microsoft.aspnetcore.authentication.core.2.3.0.nupkg.sha512",
+    "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\10.0.4\\microsoft.aspnetcore.authentication.google.10.0.4.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.4\\microsoft.aspnetcore.authentication.jwtbearer.10.0.4.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\10.0.2\\microsoft.aspnetcore.cryptography.internal.10.0.2.nupkg.sha512",
     "C:\\Users\\Walid Aguib\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\10.0.2\\microsoft.aspnetcore.cryptography.keyderivation.10.0.2.nupkg.sha512",

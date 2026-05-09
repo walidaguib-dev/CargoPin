@@ -21,6 +21,7 @@ namespace Infrastructure.Data
         public DbSet<Vessel> Vessels { get; set; }
         public DbSet<Merchandise> Merchandises { get; set; }
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Shipment> Shipments { get; set; }
         public DbSet<Zone> Zones { get; set; }
         public DbSet<Area> Areas { get; set; }
 

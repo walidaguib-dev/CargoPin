@@ -22,6 +22,10 @@ services:
       CloudinarySettings__CloudName: ${CloudinarySettings__CloudName}
       CloudinarySettings__ApiKey: ${CloudinarySettings__ApiKey}
       CloudinarySettings__ApiSecret: ${CloudinarySettings__ApiSecret}
+      Google__ClientId: ${Google__ClientId}
+      Google__ClientSecret: ${Google__ClientSecret}
+      Google__CallbackPath: ${Google__CallbackPath}
+      Google__FrontendUrl: ${Google__FrontendUrl}
 
     depends_on:
       db:

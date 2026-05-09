@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Domain.Interfaces;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using MediatR;
 
 namespace API.Services
@@ -21,6 +22,7 @@ namespace API.Services
             services.AddScoped<IClients, ClientsRepository>();
             services.AddScoped<IZones, ZonesRepository>();
             services.AddScoped<IAreas, AreasRepository>();
+            services.AddScoped<IShipments, ShipmentsRepository>();
 
             // pipelines services
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

@@ -19,6 +19,7 @@ namespace API.Routes.Extensions
             app.MapClientsEndpoints();
             app.MapZonesEndpoints();
             app.MapAreasEndpoints();
+            app.MapShipmentsEndpoints();
         }
     }
 }

@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Entities;
-using Domain.Enums;
 using Domain.Interfaces;
 using Domain.Requests.Clients;
 using Infrastructure.Data;
@@ -32,32 +27,29 @@ namespace Infrastructure.Repositories
         public async Task<Client?> GetClientAsync(int Id)
         {
             var key = $"client_{Id}";
-            var result = await _cachingService.GetOrSetAsync(
+            return await _cachingService.GetOrSetAsync(
                 key,
                 async token =>
                 {
-                    return await _context
-                        .Clients.Include(x => x.Vessel)
-                        .Include(x => x.Merchandise)
-                        .FirstOrDefaultAsync(x => x.Id == Id);
+                    return await _context.Clients
+                        .Include(x => x.Shipments)
+                        .FirstOrDefaultAsync(x => x.Id == Id, token);
                 },
                 TimeSpan.FromMinutes(10),
                 ["client"]
             );
-            return result;
         }
 
         public async Task<IQueryable<Client>> GetClientsAsync()
         {
-            var key = $"clients";
+            var key = "clients";
             var result = await _cachingService.GetOrSetAsync(
                 key,
                 async token =>
                 {
-                    return await _context
-                        .Clients.Include(x => x.Vessel)
-                        .Include(x => x.Merchandise)
-                        .ToListAsync();
+                    return await _context.Clients
+                        .Include(x => x.Shipments)
+                        .ToListAsync(token);
                 },
                 TimeSpan.FromMinutes(10),
                 ["clients"]
@@ -67,19 +59,13 @@ namespace Infrastructure.Repositories
 
         public async Task<bool?> UpdateAsync(int Id, UpdateClientRequest request)
         {
-            var clientStatus = Enum.TryParse<ClientStatus>(request.Status, true, out var status)
-                ? status
-                : ClientStatus.Awaiting;
-            var result = await _context
-                .Clients.Where(x => x.Id == Id)
+            var result = await _context.Clients.Where(x => x.Id == Id)
                 .ExecuteUpdateAsync(p =>
                     p.SetProperty(x => x.Name, request.Name)
-                        .SetProperty(x => x.BLNumbers, request.BLNumbers)
-                        .SetProperty(x => x.ArrivalDate, request.ArrivalDate)
-                        .SetProperty(x => x.Status, clientStatus)
-                        .SetProperty(x => x.Note, request.Note)
-                        .SetProperty(x => x.VesselId, request.VesselId)
-                        .SetProperty(x => x.MerchandiseId, request.MerchandiseId)
+                     .SetProperty(x => x.ContactPerson, request.ContactPerson)
+                     .SetProperty(x => x.Phone, request.Phone)
+                     .SetProperty(x => x.Email, request.Email)
+                     .SetProperty(x => x.TaxId, request.TaxId)
                 );
             return result is 0 ? null : true;
         }

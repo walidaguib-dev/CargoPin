@@ -15,6 +15,8 @@ namespace Domain.Interfaces
         public Task<object?> ConfirmEmailAsync(string userId, string token);
         public Task<User?> ForgetPasswordReset(ForgetPasswordRequest request);
 
+        public Task<User> FindOrCreateOAuthUserAsync(string email, string name);
+
         //for testing
         public Task<bool?> DeleteAll();
     }

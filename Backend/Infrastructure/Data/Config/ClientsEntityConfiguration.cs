@@ -12,8 +12,10 @@ namespace Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<Client> builder)
         {
-            builder.Property(x => x.BLNumbers).HasColumnType("text[]");
-            builder.Property(x => x.Status).HasConversion<string>().IsRequired();
+            builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
+            builder.Property(x => x.Phone).HasMaxLength(20);
+            builder.Property(x => x.Email).HasMaxLength(100);
+            builder.Property(x => x.TaxId).HasMaxLength(50);
         }
     }
 }

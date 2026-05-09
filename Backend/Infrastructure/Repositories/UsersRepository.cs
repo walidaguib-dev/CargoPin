@@ -84,6 +84,21 @@ namespace Infrastructure.Repositories
             return user;
         }
 
+        public async Task<User> FindOrCreateOAuthUserAsync(string email, string name)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user is not null)
+                return user;
+
+            user = new User { UserName = email, Email = email, EmailConfirmed = true };
+
+            var result = await userManager.CreateAsync(user);
+            if (!result.Succeeded)
+                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            return user;
+        }
+
         public async Task<bool?> DeleteAll()
         {
             var affectedRows = await userManager.Users.ExecuteDeleteAsync();

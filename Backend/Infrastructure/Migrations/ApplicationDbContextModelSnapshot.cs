@@ -71,27 +71,26 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("ArrivalDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("ContactPerson")
+                        .HasColumnType("text");
 
-                    b.PrimitiveCollection<string[]>("BLNumbers")
-                        .IsRequired()
-                        .HasColumnType("text[]");
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
 
-                    b.Property<int>("MerchandiseId")
+                    b.Property<int?>("MerchandiseId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Note")
+                    b.Property<string>("Phone")
                         .HasColumnType("text");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("TaxId")
+                        .HasColumnType("text");
 
-                    b.Property<int>("VesselId")
+                    b.Property<int?>("VesselId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -283,6 +282,47 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Shipment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ArrivalDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.PrimitiveCollection<string[]>("BLNumbers")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MerchandiseId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VesselId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("MerchandiseId");
+
+                    b.HasIndex("VesselId");
+
+                    b.ToTable("Shipments");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -572,21 +612,13 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Client", b =>
                 {
-                    b.HasOne("Domain.Entities.Merchandise", "Merchandise")
+                    b.HasOne("Domain.Entities.Merchandise", null)
                         .WithMany("Clients")
-                        .HasForeignKey("MerchandiseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MerchandiseId");
 
-                    b.HasOne("Domain.Entities.Vessel", "Vessel")
+                    b.HasOne("Domain.Entities.Vessel", null)
                         .WithMany("Clients")
-                        .HasForeignKey("VesselId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Merchandise");
-
-                    b.Navigation("Vessel");
+                        .HasForeignKey("VesselId");
                 });
 
             modelBuilder.Entity("Domain.Entities.FileUploads", b =>
@@ -639,6 +671,33 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Shipment", b =>
+                {
+                    b.HasOne("Domain.Entities.Client", "Client")
+                        .WithMany("Shipments")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Merchandise", "Merchandise")
+                        .WithMany()
+                        .HasForeignKey("MerchandiseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Vessel", "Vessel")
+                        .WithMany()
+                        .HasForeignKey("VesselId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Merchandise");
+
+                    b.Navigation("Vessel");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -688,6 +747,11 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Client", b =>
+                {
+                    b.Navigation("Shipments");
                 });
 
             modelBuilder.Entity("Domain.Entities.FileUploads", b =>
