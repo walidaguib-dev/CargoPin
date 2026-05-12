@@ -24,6 +24,7 @@ namespace API.Services
                 .AddPagingArguments()
                 .AddType<AreaType>()
                 .AddType<ZoneType>()
+                .AddType<MerchandiseAreaPositionType>()
                 .AddQueryTypes();
         }
     }

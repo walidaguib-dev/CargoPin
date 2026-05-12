@@ -168,6 +168,62 @@ namespace Infrastructure.Migrations
                     b.ToTable("Merchandises");
                 });
 
+            modelBuilder.Entity("Domain.Entities.MerchandiseAreaPosition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AreaId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("FileUploadsId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEmergencyPlacement")
+                        .HasColumnType("boolean");
+
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("geometry");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("PlacedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ShipmentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TallymanId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AreaId");
+
+                    b.HasIndex("FileUploadsId");
+
+                    b.HasIndex("ShipmentId");
+
+                    b.HasIndex("TallymanId");
+
+                    b.ToTable("MerchandiseAreaPositions");
+                });
+
             modelBuilder.Entity("Domain.Entities.OutboxEmail", b =>
                 {
                     b.Property<int>("Id")
@@ -630,6 +686,39 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.MerchandiseAreaPosition", b =>
+                {
+                    b.HasOne("Domain.Entities.Area", "Area")
+                        .WithMany()
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.FileUploads", "FileUploads")
+                        .WithMany()
+                        .HasForeignKey("FileUploadsId");
+
+                    b.HasOne("Domain.Entities.Shipment", "Shipment")
+                        .WithMany()
+                        .HasForeignKey("ShipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "Tallyman")
+                        .WithMany()
+                        .HasForeignKey("TallymanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Area");
+
+                    b.Navigation("FileUploads");
+
+                    b.Navigation("Shipment");
+
+                    b.Navigation("Tallyman");
                 });
 
             modelBuilder.Entity("Domain.Entities.OutboxEmail", b =>

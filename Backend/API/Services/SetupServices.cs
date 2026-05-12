@@ -23,6 +23,7 @@ namespace API.Services
             services.AddScoped<IZones, ZonesRepository>();
             services.AddScoped<IAreas, AreasRepository>();
             services.AddScoped<IShipments, ShipmentsRepository>();
+            services.AddScoped<IMerchandiseAreaPositions, MerchandiseAreaPositionsRepository>();
 
             // pipelines services
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

@@ -20,6 +20,7 @@ namespace API.graphql.Queries
             request.AddTypeExtension<ZonesQuery>();
             request.AddTypeExtension<AreasQuery>();
             request.AddTypeExtension<ShipmentsQuery>();
+            request.AddTypeExtension<MerchandiseAreaPositionsQuery>();
         }
     }
 }

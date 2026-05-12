@@ -33,5 +33,11 @@ namespace Domain.Helpers
 
             return new Polygon(ring);
         }
+
+        public static Point ToPoint(double latitude, double longitude)
+        {
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+            return geometryFactory.CreatePoint(new Coordinate(longitude, latitude)); // X=Lon, Y=Lat
+        }
     }
 }

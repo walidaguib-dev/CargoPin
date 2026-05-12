@@ -24,6 +24,7 @@ namespace Infrastructure.Data
         public DbSet<Shipment> Shipments { get; set; }
         public DbSet<Zone> Zones { get; set; }
         public DbSet<Area> Areas { get; set; }
+        public DbSet<MerchandiseAreaPosition> MerchandiseAreaPositions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

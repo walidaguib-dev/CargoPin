@@ -20,6 +20,7 @@ namespace API.Routes.Extensions
             app.MapZonesEndpoints();
             app.MapAreasEndpoints();
             app.MapShipmentsEndpoints();
+            app.MapMerchandiseAreaPositionsEndpoints();
         }
     }
 }
