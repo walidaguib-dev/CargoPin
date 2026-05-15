@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Tokens.Dtos;
 using Application.Users.Commands;
 using Application.Users.Dtos;
 using Domain.Interfaces;
-using Domain.Requests.Tokens;
 using Domain.Requests.Users;
 using MediatR;
 
@@ -33,26 +27,13 @@ namespace Application.Users.Handlers
 
             // here below the refresh & access tokens login
 
-            var tokenResult = await tokensService.GenerateRefreshToken(SignInResult!);
-
-            RefreshTokenRequest tokenRequest = new()
-            {
-                UserId = SignInResult!.Id,
-                RefreshTokenString = tokenResult.Token,
-            };
-
-            var AccessToken = await tokensService.GenerateAccessToken(
-                new GenerateAccessTokenRequest
-                {
-                    UserId = tokenRequest.UserId,
-                    Token = tokenRequest.RefreshTokenString,
-                }
-            );
+            var refreshToken = await tokensService.GenerateRefreshToken(SignInResult!);
+            var accessToken = await tokensService.GenerateToken(SignInResult!);
 
             return new LoginResponseDto
             {
-                Access_Token = AccessToken!,
-                Refresh_Token = tokenResult.Token,
+                Access_Token = accessToken,
+                Refresh_Token = refreshToken.Token,
             };
         }
     }

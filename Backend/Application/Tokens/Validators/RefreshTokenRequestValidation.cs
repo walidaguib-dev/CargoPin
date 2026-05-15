@@ -20,7 +20,7 @@ namespace Application.Tokens.Validators
             RuleFor(x => x.TokenRequest.RefreshTokenString)
                 .NotEmpty()
                 .NotNull()
-                .WithMessage("the user id is required!")
+                .WithMessage("the refresh token is required!")
                 .WithName("Refresh token");
         }
     }

@@ -126,9 +126,9 @@ namespace API.Routes
                     await ctx.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
                     return Results.Ok(
-                        new LoginResponseDto
+                        new TokenPairDto
                         {
-                            Access_Token = accessToken!,
+                            Access_Token = accessToken!.Access_Token,
                             Refresh_Token = refreshToken.Token,
                         }
                     );

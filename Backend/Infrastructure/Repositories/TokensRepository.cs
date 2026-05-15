@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Requests.Tokens;
@@ -27,26 +23,35 @@ namespace Infrastructure.Repositories
         private readonly UserManager<User> userManager = _userManager;
         private readonly IConfiguration config = _config;
 
-        public async Task<string?> GenerateAccessToken(GenerateAccessTokenRequest tokenRequest)
+        public async Task<TokenPairDto?> GenerateAccessToken(
+            GenerateAccessTokenRequest tokenRequest
+        )
         {
-            var refreshToken =
-                await context.RefreshTokens.FirstOrDefaultAsync(rt =>
-                    rt.UserId == tokenRequest.UserId && rt.Token == tokenRequest.Token
-                ) ?? throw new UnauthorizedAccessException("Invalid refresh token.");
+            var refreshToken = await context.RefreshTokens.FirstOrDefaultAsync(rt =>
+                rt.UserId == tokenRequest.UserId && rt.Token == tokenRequest.Token
+            );
 
-            var user =
-                await context.Users.FirstOrDefaultAsync(u => u.Id == tokenRequest.UserId)
-                ?? throw new UnauthorizedAccessException("User not found");
-            ;
+            if (
+                refreshToken is null
+                || refreshToken.RevokedAt != null
+                || refreshToken.ExpiresAt < DateTime.UtcNow
+            )
+                return null;
 
-            if (refreshToken.RevokedAt != null || refreshToken.ExpiresAt <= DateTime.UtcNow)
-                throw new UnauthorizedAccessException("Refresh token is expired or revoked.");
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == tokenRequest.UserId);
+            if (user is null)
+                return null;
 
             refreshToken.RevokedAt = DateTime.UtcNow;
-            var newRefreshToken = await GenerateRefreshToken(user!);
+            var newRefreshToken = await GenerateRefreshToken(user);
             await context.SaveChangesAsync();
 
-            return await GenerateToken(user);
+            var accessToken = await GenerateToken(user);
+            return new TokenPairDto
+            {
+                Access_Token = accessToken,
+                Refresh_Token = newRefreshToken.Token,
+            };
         }
 
         public async Task<RefreshToken> GenerateRefreshToken(User user)
