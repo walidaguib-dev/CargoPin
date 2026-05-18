@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(xargs grep *)",
-      "PowerShell(\"Cleaned\")"
+      "PowerShell(\"Cleaned\")",
+      "Bash(dotnet build *)",
+      "Bash(Select-String -Pattern \"error CS|Build succeeded|Error\")"
     ]
   }
 }

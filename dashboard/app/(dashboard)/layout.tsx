@@ -1,34 +1,23 @@
-"use client";
+import type { ReactNode } from "react";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { Sidebar } from "@/components/dashboard/Sidebar";
+import { TopBar } from "@/components/dashboard/TopBar";
+import { Inter } from "next/font/google";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { isAuthenticated, isLoading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.replace("/auth/login");
-    }
-  }, [isAuthenticated, isLoading, router]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-6 h-6 border-2 border-[#0EA5E9] border-t-transparent rounded-full animate-spin" />
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className={`flex  antialiased h-screen w-full overflow-hidden bg-[#F8FAFC] text-[#0F172A]`}
+    >
+      <div className="hidden lg:flex">
+        <Sidebar />
       </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  return <>{children}</>;
+      <div className="flex min-w-0 flex-1 flex-col">
+        <TopBar userInitials="WB" />
+        <main className="flex-1 overflow-auto bg-[#F8FAFC] p-8">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
 }

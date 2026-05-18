@@ -14,5 +14,6 @@ namespace Domain.Requests.Areas
         public string? Notes { get; set; }
         public bool IsActive { get; set; }
         public List<BoundaryCoordinate>? Boundary { get; set; } = [];
+        public int DesignatedMerchandiseId { get; set; }
     }
 }

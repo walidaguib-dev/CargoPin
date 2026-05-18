@@ -29,27 +29,19 @@ namespace Infrastructure.Repositories
         public async Task<Zone?> GetZoneAsync(int Id)
         {
             var key = $"zone_{Id}";
-            var result = await _cachingService.GetOrSetAsync(
+            return await _cachingService.GetOrSetAsync(
                 key,
-                async token =>
-                {
-                    return await _context.Zones.FirstOrDefaultAsync(x => x.Id == Id, token);
-                },
+                async token => await _context.Zones.FirstOrDefaultAsync(x => x.Id == Id, token),
                 TimeSpan.FromMinutes(10),
                 ["zone"]
             );
-            return result;
         }
 
         public async Task<IQueryable<Zone>> GetZonesAsync()
         {
-            var key = $"zones";
             var result = await _cachingService.GetOrSetAsync(
-                key,
-                async token =>
-                {
-                    return await _context.Zones.ToListAsync(token);
-                },
+                "zones",
+                async token => await _context.Zones.ToListAsync(token),
                 TimeSpan.FromMinutes(10),
                 ["zones"]
             );
@@ -59,15 +51,17 @@ namespace Infrastructure.Repositories
         public async Task<bool?> UpdateAsync(int Id, UpdateZoneRequest request)
         {
             var zone = await _context.Zones.FindAsync(Id);
-            if (zone == null) return null;
+            if (zone == null)
+                return null;
 
             zone.Name = request.Name;
             zone.Code = request.Code;
             zone.IsActive = request.IsActive;
             zone.Notes = request.Notes;
+            zone.DesignatedMerchandiseId = request.DesignatedMerchandiseId;
             zone.Type = Enum.TryParse<ZoneType>(request.Type, true, out var type)
                 ? type
-                : ZoneType.OpenYard;
+                : ZoneType.Quay;
 
             if (request.Boundary != null && request.Boundary.Any())
                 zone.Boundary = GeometryHelper.ToPolygon(request.Boundary);

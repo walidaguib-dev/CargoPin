@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,7 +9,7 @@ namespace Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<Zone> builder)
         {
-            builder.Property(x => x.Type).HasConversion<string>().IsRequired();
+            builder.Property(x => x.Type).IsRequired().HasDefaultValue(ZoneType.Quay);
 
             builder
                 .Property(x => x.Boundary)
@@ -20,6 +17,12 @@ namespace Infrastructure.Data.Config
                 .IsRequired(false);
 
             builder.HasIndex(x => x.Boundary).HasMethod("GIST");
+
+            builder
+                .HasOne(x => x.DesignatedMerchandise)
+                .WithMany()
+                .HasForeignKey(x => x.DesignatedMerchandiseId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

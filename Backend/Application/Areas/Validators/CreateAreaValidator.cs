@@ -23,6 +23,9 @@ namespace Application.Areas.Validators
             RuleFor(x => x.Dto.ZoneId)
                 .GreaterThan(0).WithMessage("A valid ZoneId is required.");
 
+            RuleFor(x => x.Dto.DesignatedMerchandiseId)
+                .GreaterThan(0).WithMessage("DesignatedMerchandiseId is required.");
+
             RuleFor(x => x.Dto.Boundary)
                 .NotEmpty().WithMessage("Boundary coordinates are required.")
                 .Must(b => b.Count >= 3).WithMessage("Boundary must have at least 3 points.");

@@ -10,6 +10,7 @@ namespace Application.Areas.Dtos
         public string? Notes { get; set; }
         public bool IsActive { get; set; } = true;
         public int ZoneId { get; set; }
+        public int DesignatedMerchandiseId { get; set; }
         public List<BoundaryCoordinate> Boundary { get; set; } = [];
     }
 }

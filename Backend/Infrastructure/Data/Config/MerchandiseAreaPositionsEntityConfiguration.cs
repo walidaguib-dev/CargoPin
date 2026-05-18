@@ -17,7 +17,13 @@ namespace Infrastructure.Data.Config
                 .HasOne(x => x.Area)
                 .WithMany()
                 .HasForeignKey(x => x.AreaId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder
+                .HasOne(x => x.Zone)
+                .WithMany()
+                .HasForeignKey(x => x.ZoneId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder
                 .HasOne(x => x.Shipment)
@@ -39,6 +45,10 @@ namespace Infrastructure.Data.Config
 
             builder.Property(x => x.PlacedAt).IsRequired();
             builder.Property(x => x.IsActive).HasDefaultValue(true);
+
+            builder.HasIndex(x => new { x.ShipmentId, x.IsActive });
+            builder.HasIndex(x => new { x.AreaId, x.IsActive });
+            builder.HasIndex(x => new { x.ZoneId, x.IsActive });
         }
     }
 }

@@ -10,5 +10,6 @@ namespace Domain.Requests.Zones
         public string? Notes { get; set; }
         public bool IsActive { get; set; } = true;
         public List<BoundaryCoordinate>? Boundary { get; set; }
+        public int? DesignatedMerchandiseId { get; set; }
     }
 }

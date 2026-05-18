@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Requests.MerchandiseAreaPositions;
+using NetTopologySuite.Geometries;
 
 namespace Domain.Interfaces
 {
@@ -10,5 +11,7 @@ namespace Domain.Interfaces
         Task<MerchandiseAreaPosition> CreateAsync(MerchandiseAreaPosition position);
         Task<bool?> DeleteAsync(int id);
         Task<bool?> UpdateAsync(int id, UpdateMerchandiseAreaPositionRequest request);
+        Task<Zone?> FindContainingZoneAsync(Point point);
+        Task<Area?> FindContainingAreaAsync(int zoneId, Point point);
     }
 }

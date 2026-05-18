@@ -11,7 +11,9 @@ namespace Domain.Entities
         public ZoneType Type { get; set; }
         public string? Notes { get; set; }
         public bool IsActive { get; set; } = true;
-        public Geometry? Boundary { get; set; }
+        public Polygon? Boundary { get; set; }
+        public int? DesignatedMerchandiseId { get; set; }
+        public Merchandise? DesignatedMerchandise { get; set; }
         public List<Area> Areas { get; set; } = [];
     }
 }

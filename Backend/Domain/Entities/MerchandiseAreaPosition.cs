@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using NetTopologySuite.Geometries;
 
 namespace Domain.Entities
@@ -9,8 +5,10 @@ namespace Domain.Entities
     public class MerchandiseAreaPosition
     {
         public int Id { get; set; }
-        public int AreaId { get; set; }
-        public Area Area { get; set; } = null!;
+        public int? AreaId { get; set; }
+        public Area? Area { get; set; }
+        public int? ZoneId { get; set; }
+        public Zone? Zone { get; set; }
         public Point Location { get; set; } = null!;
         public int ShipmentId { get; set; }
         public Shipment Shipment { get; set; } = null!;

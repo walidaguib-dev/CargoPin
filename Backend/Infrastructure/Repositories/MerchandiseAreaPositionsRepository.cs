@@ -3,6 +3,7 @@ using Domain.Interfaces;
 using Domain.Requests.MerchandiseAreaPositions;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace Infrastructure.Repositories
 {
@@ -77,5 +78,16 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Zone?> FindContainingZoneAsync(Point point) =>
+            await _context.Zones.FirstOrDefaultAsync(z =>
+                z.Boundary != null && z.Boundary.Contains(point)
+            );
+
+        public async Task<Area?> FindContainingAreaAsync(int zoneId, Point point) =>
+            await _context.Areas.FirstOrDefaultAsync(a =>
+                a.ZoneId == zoneId && a.Boundary.Contains(point)
+            );
     }
 }
+

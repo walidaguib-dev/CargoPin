@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Helpers;
@@ -33,29 +29,22 @@ namespace Infrastructure.Repositories
         public async Task<Area?> GetAreaAsync(int Id)
         {
             var key = $"area_{Id}";
-            var result = await _cachingService.GetOrSetAsync(
+            return await _cachingService.GetOrSetAsync(
                 key,
                 async token =>
-                {
-                    return await _context
+                    await _context
                         .Areas.Include(x => x.Zone)
-                        .FirstOrDefaultAsync(x => x.Id == Id, token);
-                },
+                        .FirstOrDefaultAsync(x => x.Id == Id, token),
                 TimeSpan.FromMinutes(10),
                 ["area"]
             );
-            return result;
         }
 
         public async Task<IQueryable<Area>> GetAreasAsync()
         {
-            var key = $"areas";
             var result = await _cachingService.GetOrSetAsync(
-                key,
-                async token =>
-                {
-                    return await _context.Areas.Include(x => x.Zone).ToListAsync();
-                },
+                "areas",
+                async token => await _context.Areas.Include(x => x.Zone).ToListAsync(token),
                 TimeSpan.FromMinutes(10),
                 ["areas"]
             );
@@ -72,15 +61,13 @@ namespace Infrastructure.Repositories
             area.Code = request.Code;
             area.IsActive = request.IsActive;
             area.Notes = request.Notes;
-
+            area.DesignatedMerchandiseId = request.DesignatedMerchandiseId;
             area.Status = Enum.TryParse<AreaStatus>(request.Status, true, out var status)
                 ? status
                 : AreaStatus.Available;
 
             if (request.Boundary != null && request.Boundary.Any())
-            {
                 area.Boundary = GeometryHelper.ToPolygon(request.Boundary);
-            }
 
             await _context.SaveChangesAsync();
             return true;

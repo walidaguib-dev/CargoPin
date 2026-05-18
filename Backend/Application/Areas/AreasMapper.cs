@@ -22,13 +22,13 @@ namespace Application.Areas
                 Notes = dto.Notes,
                 IsActive = dto.IsActive,
                 ZoneId = dto.ZoneId,
+                DesignatedMerchandiseId = dto.DesignatedMerchandiseId,
                 Boundary = GeometryHelper.ToPolygon(dto.Boundary),
             };
         }
 
-        public static UpdateAreaRequest MapToRequest(this UpdateAreaDto dto)
-        {
-            return new UpdateAreaRequest
+        public static UpdateAreaRequest MapToRequest(this UpdateAreaDto dto) =>
+            new()
             {
                 Name = dto.Name,
                 Code = dto.Code,
@@ -36,7 +36,7 @@ namespace Application.Areas
                 Notes = dto.Notes,
                 IsActive = dto.IsActive,
                 Boundary = dto.Boundary,
+                DesignatedMerchandiseId = dto.DesignatedMerchandiseId,
             };
-        }
     }
 }

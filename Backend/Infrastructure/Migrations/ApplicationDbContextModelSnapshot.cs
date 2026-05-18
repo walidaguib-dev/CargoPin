@@ -32,13 +32,16 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<Geometry>("Boundary")
+                    b.Property<Polygon>("Boundary")
                         .IsRequired()
                         .HasColumnType("geometry");
 
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("DesignatedMerchandiseId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -57,6 +60,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DesignatedMerchandiseId");
 
                     b.HasIndex("ZoneId");
 
@@ -176,7 +181,7 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AreaId")
+                    b.Property<int?>("AreaId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("ClosedAt")
@@ -211,6 +216,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("ZoneId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AreaId");
@@ -220,6 +228,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ShipmentId");
 
                     b.HasIndex("TallymanId");
+
+                    b.HasIndex("ZoneId");
 
                     b.ToTable("MerchandiseAreaPositions");
                 });
@@ -482,12 +492,15 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<Geometry>("Boundary")
+                    b.Property<Polygon>("Boundary")
                         .HasColumnType("geometry");
 
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("DesignatedMerchandiseId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -503,6 +516,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DesignatedMerchandiseId");
 
                     b.ToTable("Zones");
                 });
@@ -657,11 +672,19 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Area", b =>
                 {
+                    b.HasOne("Domain.Entities.Merchandise", "DesignatedMerchandise")
+                        .WithMany()
+                        .HasForeignKey("DesignatedMerchandiseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.Zone", "Zone")
                         .WithMany("Areas")
                         .HasForeignKey("ZoneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("DesignatedMerchandise");
 
                     b.Navigation("Zone");
                 });
@@ -692,9 +715,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.Area", "Area")
                         .WithMany()
-                        .HasForeignKey("AreaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AreaId");
 
                     b.HasOne("Domain.Entities.FileUploads", "FileUploads")
                         .WithMany()
@@ -712,6 +733,10 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Zone", "Zone")
+                        .WithMany()
+                        .HasForeignKey("ZoneId");
+
                     b.Navigation("Area");
 
                     b.Navigation("FileUploads");
@@ -719,6 +744,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Shipment");
 
                     b.Navigation("Tallyman");
+
+                    b.Navigation("Zone");
                 });
 
             modelBuilder.Entity("Domain.Entities.OutboxEmail", b =>
@@ -785,6 +812,15 @@ namespace Infrastructure.Migrations
                     b.Navigation("Merchandise");
 
                     b.Navigation("Vessel");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Zone", b =>
+                {
+                    b.HasOne("Domain.Entities.Merchandise", "DesignatedMerchandise")
+                        .WithMany()
+                        .HasForeignKey("DesignatedMerchandiseId");
+
+                    b.Navigation("DesignatedMerchandise");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

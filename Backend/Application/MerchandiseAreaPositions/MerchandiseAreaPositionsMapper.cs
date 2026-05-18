@@ -1,7 +1,7 @@
 using Application.MerchandiseAreaPositions.Dtos;
 using Domain.Entities;
-using Domain.Helpers;
 using Domain.Requests.MerchandiseAreaPositions;
+using NetTopologySuite.Geometries;
 
 namespace Application.MerchandiseAreaPositions
 {
@@ -9,15 +9,20 @@ namespace Application.MerchandiseAreaPositions
     {
         public static MerchandiseAreaPosition MapToEntity(
             this CreateMerchandiseAreaPositionDto dto,
-            string tallymanId
+            string tallymanId,
+            Point point,
+            int? zoneId,
+            int? areaId,
+            bool isEmergency
         ) =>
             new()
             {
                 ShipmentId = dto.ShipmentId,
-                AreaId = dto.AreaId,
-                Location = GeometryHelper.ToPoint(dto.Latitude, dto.Longitude),
+                Location = point,
+                ZoneId = zoneId,
+                AreaId = areaId,
                 FileUploadsId = dto.FileUploadId,
-                IsEmergencyPlacement = dto.IsEmergencyPlacement,
+                IsEmergencyPlacement = isEmergency,
                 Notes = dto.Notes,
                 TallymanId = tallymanId,
                 PlacedAt = DateTime.UtcNow,

@@ -12,7 +12,8 @@ namespace Application.Zones
         {
             var zoneType = Enum.TryParse<ZoneType>(dto.Type, true, out var type)
                 ? type
-                : ZoneType.OpenYard;
+                : ZoneType.Quay;
+
             return new Zone
             {
                 Name = dto.Name,
@@ -20,6 +21,7 @@ namespace Application.Zones
                 Notes = dto.Notes,
                 IsActive = dto.IsActive,
                 Type = zoneType,
+                DesignatedMerchandiseId = dto.DesignatedMerchandiseId,
                 Boundary =
                     dto.Boundary != null && dto.Boundary.Any()
                         ? GeometryHelper.ToPolygon(dto.Boundary)
@@ -27,9 +29,8 @@ namespace Application.Zones
             };
         }
 
-        public static UpdateZoneRequest MapToRequest(this UpdateZoneDto dto)
-        {
-            return new UpdateZoneRequest
+        public static UpdateZoneRequest MapToRequest(this UpdateZoneDto dto) =>
+            new()
             {
                 Name = dto.Name,
                 Code = dto.Code,
@@ -37,7 +38,7 @@ namespace Application.Zones
                 IsActive = dto.IsActive,
                 Type = dto.Type,
                 Boundary = dto.Boundary,
+                DesignatedMerchandiseId = dto.DesignatedMerchandiseId,
             };
-        }
     }
 }

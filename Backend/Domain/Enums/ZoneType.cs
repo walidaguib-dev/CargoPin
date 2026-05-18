@@ -2,9 +2,7 @@ namespace Domain.Enums
 {
     public enum ZoneType
     {
-        Hangar,
-        OpenYard,
-        Mixed,
-        Restricted,
+        Hangar = 0,
+        Quay = 1,
     }
 }
