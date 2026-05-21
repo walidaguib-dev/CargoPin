@@ -1,5 +1,4 @@
 using Application.MerchandiseAreaPositions.Commands;
-using Domain.Entities;
 using Domain.Enums;
 using Domain.Helpers;
 using Domain.Interfaces;
@@ -9,19 +8,22 @@ namespace Application.MerchandiseAreaPositions.Handlers
 {
     public class CreateMerchandiseAreaPositionHandler(
         IMerchandiseAreaPositions positionsService,
-        IShipments shipmentsService
-    ) : IRequestHandler<CreateMerchandiseAreaPositionCommand, MerchandiseAreaPosition>
+        IShipments shipmentsService,
+        ICaching cachingService
+    ) : IRequestHandler<CreateMerchandiseAreaPositionCommand, int>
     {
-        public async Task<MerchandiseAreaPosition> Handle(
+        public async Task<int> Handle(
             CreateMerchandiseAreaPositionCommand request,
             CancellationToken cancellationToken
         )
         {
-            var shipment =
-                await shipmentsService.GetShipmentAsync(request.Dto.ShipmentId)
-                ?? throw new Exception($"Shipment {request.Dto.ShipmentId} not found.");
+            var dto = request.Dto;
 
-            var point = GeometryHelper.ToPoint(request.Dto.Latitude, request.Dto.Longitude);
+            var shipment =
+                await shipmentsService.GetShipmentAsync(dto.ShipmentId)
+                ?? throw new Exception($"Shipment {dto.ShipmentId} not found.");
+
+            var point = GeometryHelper.ToPoint(dto.Latitude, dto.Longitude);
 
             var zone = await positionsService.FindContainingZoneAsync(point);
 
@@ -52,15 +54,18 @@ namespace Application.MerchandiseAreaPositions.Handlers
                 designatedMerchandiseId.HasValue
                 && designatedMerchandiseId != shipment.MerchandiseId;
 
-            var position = request.Dto.MapToEntity(
-                request.TallymanId,
-                point,
-                zoneId,
-                areaId,
-                isEmergency
-            );
+            var position = dto.MapToEntity(request.TallymanId, point, zoneId, areaId, isEmergency);
 
-            return await positionsService.CreateAsync(position);
+            await positionsService.CreateAsync(position);
+
+            if (zoneId.HasValue)
+                await cachingService.RemoveByTagAsync($"positions:zone:{zoneId}");
+            if (areaId.HasValue)
+                await cachingService.RemoveByTagAsync($"positions:area:{areaId}");
+            await cachingService.RemoveByTagAsync($"positions:shipment:{dto.ShipmentId}");
+            await cachingService.RemoveByTagAsync("positions:all");
+
+            return position.Id;
         }
     }
 }

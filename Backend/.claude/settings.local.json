@@ -4,7 +4,9 @@
       "Bash(xargs grep *)",
       "PowerShell(\"Cleaned\")",
       "Bash(dotnet build *)",
-      "Bash(Select-String -Pattern \"error CS|Build succeeded|Error\")"
+      "Bash(Select-String -Pattern \"error CS|Build succeeded|Error\")",
+      "Bash(Get-ChildItem -Path \"d:\\\\CargoPin\\\\Backend\" -Recurse -Filter \"*Exception*.cs\")",
+      "Bash(Select-Object -ExpandProperty FullName)"
     ]
   }
 }

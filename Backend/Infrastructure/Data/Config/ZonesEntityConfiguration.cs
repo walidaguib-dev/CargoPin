@@ -9,7 +9,7 @@ namespace Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<Zone> builder)
         {
-            builder.Property(x => x.Type).IsRequired().HasDefaultValue(ZoneType.Quay);
+            builder.Property(x => x.Type).IsRequired().HasDefaultValue(ZoneType.Hangar);
 
             builder
                 .Property(x => x.Boundary)

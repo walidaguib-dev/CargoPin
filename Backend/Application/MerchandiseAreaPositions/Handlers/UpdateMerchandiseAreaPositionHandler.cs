@@ -1,5 +1,5 @@
-using Application.MerchandiseAreaPositions.Commands;
 using Application.MerchandiseAreaPositions;
+using Application.MerchandiseAreaPositions.Commands;
 using Domain.Interfaces;
 using MediatR;
 
