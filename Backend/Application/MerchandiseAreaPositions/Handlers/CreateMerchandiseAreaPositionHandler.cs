@@ -1,4 +1,5 @@
 using Application.MerchandiseAreaPositions.Commands;
+using Domain.Entities;
 using Domain.Enums;
 using Domain.Helpers;
 using Domain.Interfaces;
@@ -8,11 +9,10 @@ namespace Application.MerchandiseAreaPositions.Handlers
 {
     public class CreateMerchandiseAreaPositionHandler(
         IMerchandiseAreaPositions positionsService,
-        IShipments shipmentsService,
-        ICaching cachingService
-    ) : IRequestHandler<CreateMerchandiseAreaPositionCommand, int>
+        IShipments shipmentsService
+    ) : IRequestHandler<CreateMerchandiseAreaPositionCommand, MerchandiseAreaPosition>
     {
-        public async Task<int> Handle(
+        public async Task<MerchandiseAreaPosition> Handle(
             CreateMerchandiseAreaPositionCommand request,
             CancellationToken cancellationToken
         )
@@ -56,16 +56,7 @@ namespace Application.MerchandiseAreaPositions.Handlers
 
             var position = dto.MapToEntity(request.TallymanId, point, zoneId, areaId, isEmergency);
 
-            await positionsService.CreateAsync(position);
-
-            if (zoneId.HasValue)
-                await cachingService.RemoveByTagAsync($"positions:zone:{zoneId}");
-            if (areaId.HasValue)
-                await cachingService.RemoveByTagAsync($"positions:area:{areaId}");
-            await cachingService.RemoveByTagAsync($"positions:shipment:{dto.ShipmentId}");
-            await cachingService.RemoveByTagAsync("positions:all");
-
-            return position.Id;
+            return await positionsService.CreateAsync(position);
         }
     }
 }
