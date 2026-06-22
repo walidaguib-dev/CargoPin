@@ -1,3 +1,4 @@
+using Domain.Enums;
 using NetTopologySuite.Geometries;
 
 namespace Domain.Entities
@@ -5,6 +6,7 @@ namespace Domain.Entities
     public class MerchandiseAreaPosition
     {
         public int Id { get; set; }
+        public PositionState state { get; set; } = PositionState.active;
         public int? AreaId { get; set; }
         public Area? Area { get; set; }
         public int? ZoneId { get; set; }

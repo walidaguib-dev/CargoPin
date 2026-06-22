@@ -1,4 +1,4 @@
-import type { CargoType } from "@/lib/merchandises/types";
+import { CARGO_TYPE_LABELS, type CargoType } from "@/lib/merchandises/types";
 
 type BadgeColors = {
   bg: string;
@@ -13,25 +13,35 @@ const FALLBACK: BadgeColors = {
 };
 
 const COLORS: Record<CargoType, BadgeColors> = {
-  Bulk: {
-    bg: "#DBEAFE",
-    text: "#1D4ED8",
-    className: "bg-[#DBEAFE] text-[#1D4ED8]",
-  },
-  General: {
+  GeneralCargo: {
     bg: "#DCFCE7",
     text: "#166534",
     className: "bg-[#DCFCE7] text-[#166534]",
   },
-  Container: {
+  SteelCoils: {
+    bg: "#DBEAFE",
+    text: "#1D4ED8",
+    className: "bg-[#DBEAFE] text-[#1D4ED8]",
+  },
+  Colis: {
     bg: "#FEF3C7",
     text: "#92400E",
     className: "bg-[#FEF3C7] text-[#92400E]",
   },
-  Vehicle: {
+  Bulk: {
+    bg: "#E0E7FF",
+    text: "#4338CA",
+    className: "bg-[#E0E7FF] text-[#4338CA]",
+  },
+  Machinery: {
     bg: "#FCE7F3",
     text: "#9F1239",
     className: "bg-[#FCE7F3] text-[#9F1239]",
+  },
+  Dangerous: {
+    bg: "#FEE2E2",
+    text: "#B91C1C",
+    className: "bg-[#FEE2E2] text-[#B91C1C]",
   },
 };
 
@@ -49,11 +59,12 @@ interface CargoTypeBadgeProps {
 
 export function CargoTypeBadge({ value }: CargoTypeBadgeProps) {
   const colors = cargoTypeColors(value);
+  const label = isCargoType(value) ? CARGO_TYPE_LABELS[value] : value;
   return (
     <span
       className={`inline-flex items-center rounded px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider ${colors.className}`}
     >
-      {value}
+      {label}
     </span>
   );
 }

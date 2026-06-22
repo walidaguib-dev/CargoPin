@@ -1,36 +1,37 @@
 {
   "format": 1,
   "restore": {
-    "D:\\CargoPin\\Backend\\API\\API.csproj": {}
+    "/home/walidaguib7/net/CargoPin/Backend/API/API.csproj": {}
   },
   "projects": {
-    "D:\\CargoPin\\Backend\\API\\API.csproj": {
+    "/home/walidaguib7/net/CargoPin/Backend/API/API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\CargoPin\\Backend\\API\\API.csproj",
+        "projectUniqueName": "/home/walidaguib7/net/CargoPin/Backend/API/API.csproj",
         "projectName": "API",
-        "projectPath": "D:\\CargoPin\\Backend\\API\\API.csproj",
-        "packagesPath": "C:\\Users\\Walid Aguib\\.nuget\\packages\\",
-        "outputPath": "D:\\CargoPin\\Backend\\API\\obj\\",
+        "projectPath": "/home/walidaguib7/net/CargoPin/Backend/API/API.csproj",
+        "packagesPath": "/home/walidaguib7/.nuget/packages/",
+        "outputPath": "/home/walidaguib7/net/CargoPin/Backend/API/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Walid Aguib\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/walidaguib7/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\CargoPin\\Backend\\Application\\Application.csproj": {
-                "projectPath": "D:\\CargoPin\\Backend\\Application\\Application.csproj"
+              "/home/walidaguib7/net/CargoPin/Backend/Application/Application.csproj": {
+                "projectPath": "/home/walidaguib7/net/CargoPin/Backend/Application/Application.csproj"
               },
-              "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj"
+              "/home/walidaguib7/net/CargoPin/Backend/Infrastructure/Infrastructure.csproj": {
+                "projectPath": "/home/walidaguib7/net/CargoPin/Backend/Infrastructure/Infrastructure.csproj"
               }
             }
           }
@@ -144,7 +145,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.109/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -562,33 +563,34 @@
         }
       }
     },
-    "D:\\CargoPin\\Backend\\Application\\Application.csproj": {
+    "/home/walidaguib7/net/CargoPin/Backend/Application/Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\CargoPin\\Backend\\Application\\Application.csproj",
+        "projectUniqueName": "/home/walidaguib7/net/CargoPin/Backend/Application/Application.csproj",
         "projectName": "Application",
-        "projectPath": "D:\\CargoPin\\Backend\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\Walid Aguib\\.nuget\\packages\\",
-        "outputPath": "D:\\CargoPin\\Backend\\Application\\obj\\",
+        "projectPath": "/home/walidaguib7/net/CargoPin/Backend/Application/Application.csproj",
+        "packagesPath": "/home/walidaguib7/.nuget/packages/",
+        "outputPath": "/home/walidaguib7/net/CargoPin/Backend/Application/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Walid Aguib\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/walidaguib7/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\CargoPin\\Backend\\Domain\\Domain.csproj": {
-                "projectPath": "D:\\CargoPin\\Backend\\Domain\\Domain.csproj"
+              "/home/walidaguib7/net/CargoPin/Backend/Domain/Domain.csproj": {
+                "projectPath": "/home/walidaguib7/net/CargoPin/Backend/Domain/Domain.csproj"
               },
-              "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj"
+              "/home/walidaguib7/net/CargoPin/Backend/Infrastructure/Infrastructure.csproj": {
+                "projectPath": "/home/walidaguib7/net/CargoPin/Backend/Infrastructure/Infrastructure.csproj"
               }
             }
           }
@@ -658,7 +660,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.109/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -936,22 +938,23 @@
         }
       }
     },
-    "D:\\CargoPin\\Backend\\Domain\\Domain.csproj": {
+    "/home/walidaguib7/net/CargoPin/Backend/Domain/Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\CargoPin\\Backend\\Domain\\Domain.csproj",
+        "projectUniqueName": "/home/walidaguib7/net/CargoPin/Backend/Domain/Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "D:\\CargoPin\\Backend\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\Walid Aguib\\.nuget\\packages\\",
-        "outputPath": "D:\\CargoPin\\Backend\\Domain\\obj\\",
+        "projectPath": "/home/walidaguib7/net/CargoPin/Backend/Domain/Domain.csproj",
+        "packagesPath": "/home/walidaguib7/.nuget/packages/",
+        "outputPath": "/home/walidaguib7/net/CargoPin/Backend/Domain/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Walid Aguib\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/walidaguib7/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -1009,7 +1012,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.109/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -1287,30 +1290,31 @@
         }
       }
     },
-    "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj": {
+    "/home/walidaguib7/net/CargoPin/Backend/Infrastructure/Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "/home/walidaguib7/net/CargoPin/Backend/Infrastructure/Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\Walid Aguib\\.nuget\\packages\\",
-        "outputPath": "D:\\CargoPin\\Backend\\Infrastructure\\obj\\",
+        "projectPath": "/home/walidaguib7/net/CargoPin/Backend/Infrastructure/Infrastructure.csproj",
+        "packagesPath": "/home/walidaguib7/.nuget/packages/",
+        "outputPath": "/home/walidaguib7/net/CargoPin/Backend/Infrastructure/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Walid Aguib\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/walidaguib7/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "/usr/lib/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\CargoPin\\Backend\\Domain\\Domain.csproj": {
-                "projectPath": "D:\\CargoPin\\Backend\\Domain\\Domain.csproj"
+              "/home/walidaguib7/net/CargoPin/Backend/Domain/Domain.csproj": {
+                "projectPath": "/home/walidaguib7/net/CargoPin/Backend/Domain/Domain.csproj"
               }
             }
           }
@@ -1456,7 +1460,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.109/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

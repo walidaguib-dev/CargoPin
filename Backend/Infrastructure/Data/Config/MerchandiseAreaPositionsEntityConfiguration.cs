@@ -49,6 +49,8 @@ namespace Infrastructure.Data.Config
             builder.HasIndex(x => new { x.ShipmentId, x.IsActive });
             builder.HasIndex(x => new { x.AreaId, x.IsActive });
             builder.HasIndex(x => new { x.ZoneId, x.IsActive });
+
+            builder.Property(x => x.state).HasConversion<string>().IsRequired();
         }
     }
 }

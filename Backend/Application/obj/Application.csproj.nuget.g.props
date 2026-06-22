@@ -4,21 +4,21 @@
     <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
-    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\Walid Aguib\.nuget\packages\</NuGetPackageFolders>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/home/walidaguib7/.nuget/packages/</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/home/walidaguib7/.nuget/packages/</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
     <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">7.0.0</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="C:\Users\Walid Aguib\.nuget\packages\" />
+    <SourceRoot Include="/home/walidaguib7/.nuget/packages/" />
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore\10.0.4\buildTransitive\net10.0\Microsoft.EntityFrameworkCore.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore\10.0.4\buildTransitive\net10.0\Microsoft.EntityFrameworkCore.props')" />
-    <Import Project="$(NuGetPackageRoot)hotchocolate.data\15.1.14\build\HotChocolate.Data.props" Condition="Exists('$(NuGetPackageRoot)hotchocolate.data\15.1.14\build\HotChocolate.Data.props')" />
-    <Import Project="$(NuGetPackageRoot)hotchocolate.data.entityframework\15.1.14\build\HotChocolate.Data.EntityFramework.props" Condition="Exists('$(NuGetPackageRoot)hotchocolate.data.entityframework\15.1.14\build\HotChocolate.Data.EntityFramework.props')" />
-    <Import Project="$(NuGetPackageRoot)hotchocolate.aspnetcore\15.1.14\build\HotChocolate.AspNetCore.props" Condition="Exists('$(NuGetPackageRoot)hotchocolate.aspnetcore\15.1.14\build\HotChocolate.AspNetCore.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore/10.0.4/buildTransitive/net10.0/Microsoft.EntityFrameworkCore.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore/10.0.4/buildTransitive/net10.0/Microsoft.EntityFrameworkCore.props')" />
+    <Import Project="$(NuGetPackageRoot)hotchocolate.data/15.1.14/build/HotChocolate.Data.props" Condition="Exists('$(NuGetPackageRoot)hotchocolate.data/15.1.14/build/HotChocolate.Data.props')" />
+    <Import Project="$(NuGetPackageRoot)hotchocolate.data.entityframework/15.1.14/build/HotChocolate.Data.EntityFramework.props" Condition="Exists('$(NuGetPackageRoot)hotchocolate.data.entityframework/15.1.14/build/HotChocolate.Data.EntityFramework.props')" />
+    <Import Project="$(NuGetPackageRoot)hotchocolate.aspnetcore/15.1.14/build/HotChocolate.AspNetCore.props" Condition="Exists('$(NuGetPackageRoot)hotchocolate.aspnetcore/15.1.14/build/HotChocolate.AspNetCore.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgHangfire_SqlServer Condition=" '$(PkgHangfire_SqlServer)' == '' ">C:\Users\Walid Aguib\.nuget\packages\hangfire.sqlserver\1.8.22</PkgHangfire_SqlServer>
+    <PkgHangfire_SqlServer Condition=" '$(PkgHangfire_SqlServer)' == '' ">/home/walidaguib7/.nuget/packages/hangfire.sqlserver/1.8.22</PkgHangfire_SqlServer>
   </PropertyGroup>
 </Project>

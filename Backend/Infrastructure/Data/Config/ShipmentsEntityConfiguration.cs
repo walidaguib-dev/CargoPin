@@ -12,17 +12,20 @@ namespace Infrastructure.Data.Config
             builder.Property(x => x.Status).HasConversion<string>().IsRequired();
             builder.Property(x => x.ArrivalDate).IsRequired();
 
-            builder.HasOne(x => x.Client)
+            builder
+                .HasOne(x => x.Client)
                 .WithMany(x => x.Shipments)
                 .HasForeignKey(x => x.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.Vessel)
+            builder
+                .HasOne(x => x.Vessel)
                 .WithMany()
                 .HasForeignKey(x => x.VesselId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.Merchandise)
+            builder
+                .HasOne(x => x.Merchandise)
                 .WithMany()
                 .HasForeignKey(x => x.MerchandiseId)
                 .OnDelete(DeleteBehavior.Restrict);

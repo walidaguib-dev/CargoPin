@@ -8,7 +8,11 @@
       "Bash(xargs grep -l \"context\\\\|provider\\\\|interceptor\\\\|refresh\\\\|token\")",
       "Bash(Get-ChildItem -Path \"d:\\\\CargoPin\\\\Backend\" -Recurse -Filter \"*.ts\")",
       "Bash(Select-Object -First 20)",
-      "Bash(dotnet build *)"
+      "Bash(dotnet build *)",
+      "Bash(xargs -I{} grep -l \"Url\\\\|Port\" {})",
+      "Bash(npx tsc *)",
+      "Bash(printenv)",
+      "Bash(echo \"exit:$?\")"
     ]
   }
 }

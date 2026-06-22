@@ -14,9 +14,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-// import { useCreateMerchandise } from "@/lib/merchandises/queries";
+import { useAuth } from "@/context/AuthContext";
+import { createMerchandise, ApiValidationError } from "@/lib/merchandises/api";
 import {
+  apiFieldToFormField,
   merchandiseSchema,
+  type CreateMerchandiseDto,
   type MerchandiseFormValues,
 } from "@/lib/merchandises/types";
 
@@ -25,11 +28,12 @@ import { MerchandiseFormFields } from "./MerchandiseFormFields";
 interface CreateMerchandiseModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onCreated?: () => void;
 }
 
 const DEFAULTS: MerchandiseFormValues = {
   description: "",
-  cargoType: "Bulk",
+  cargoType: "GeneralCargo",
   weight: null,
   numberOfHeat: null,
   note: null,
@@ -38,15 +42,49 @@ const DEFAULTS: MerchandiseFormValues = {
 export function CreateMerchandiseModal({
   open,
   onOpenChange,
+  onCreated,
 }: CreateMerchandiseModalProps) {
+  const { accessToken } = useAuth();
+
   const form = useForm<MerchandiseFormValues>({
     resolver: zodResolver(merchandiseSchema),
     defaultValues: DEFAULTS,
   });
 
-  // const createMutation = useCreateMerchandise();
+  useEffect(() => {
+    if (open) form.reset(DEFAULTS);
+  }, [open, form]);
 
-  const onSubmit = form.handleSubmit(async (values) => {});
+  const isSubmitting = form.formState.isSubmitting;
+
+  const onSubmit = form.handleSubmit(async (values) => {
+    const dto: CreateMerchandiseDto = {
+      description: values.description,
+      cargoType: values.cargoType,
+      weight: values.weight,
+      numberOfHeat: values.numberOfHeat,
+      note: values.note,
+    };
+
+    try {
+      await createMerchandise(dto, accessToken);
+      toast.success("Merchandise created");
+      onOpenChange(false);
+      onCreated?.();
+    } catch (err) {
+      if (err instanceof ApiValidationError) {
+        for (const fieldError of err.fieldErrors) {
+          const field = apiFieldToFormField(fieldError.field);
+          if (field) {
+            form.setError(field, { message: fieldError.message });
+          }
+        }
+        toast.error("Please fix the highlighted fields");
+      } else {
+        toast.error("Failed to create merchandise");
+      }
+    }
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -69,24 +107,24 @@ export function CreateMerchandiseModal({
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                disabled={isSubmitting}
                 className="h-10 rounded-lg border-[#E2E8F0] bg-white px-4 text-[14px] font-medium text-[#374151]"
-                // disabled={createMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                // disabled={createMutation.isPending}
+                disabled={isSubmitting}
                 className="h-10 gap-1.5 rounded-lg bg-[#0EA5E9] px-4 text-[14px] font-semibold text-white hover:bg-[#0284C7]"
               >
-                {/* {createMutation.isPending ? (
+                {isSubmitting ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
                     Creating...
                   </>
                 ) : (
                   "Create"
-                )} */}
+                )}
               </Button>
             </div>
           </form>

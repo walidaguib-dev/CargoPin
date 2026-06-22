@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MerchandiseDetailCard } from "@/components/merchandises/MerchandiseDetailCard";
 import { EditMerchandiseModal } from "@/components/merchandises/EditMerchandiseModal";
 import { DeleteMerchandisePopup } from "@/components/merchandises/DeleteMerchandisePopup";
+import { useMerchandise } from "@/lib/merchandises/hooks";
 
 function parseId(raw: string | string[] | undefined): number | null {
   if (typeof raw !== "string") return null;
@@ -81,6 +82,8 @@ export default function MerchandiseDetailPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
+  const { data, isLoading, isError, refetch } = useMerchandise(id);
+
   if (id === null) {
     return (
       <div>
@@ -96,7 +99,7 @@ export default function MerchandiseDetailPage() {
     <div>
       <BackLink />
 
-      {/* <div className="mt-6">
+      <div className="mt-6">
         {isLoading ? (
           <DetailSkeleton />
         ) : isError || !data ? (
@@ -108,21 +111,25 @@ export default function MerchandiseDetailPage() {
             onDelete={() => setDeleteOpen(true)}
           />
         )}
-      </div> */}
+      </div>
 
-      {/* <EditMerchandiseModal
+      <EditMerchandiseModal
         merchandise={editOpen && data ? data : null}
         onOpenChange={(open) => {
           if (!open) setEditOpen(false);
         }}
-      /> */}
-      {/* <DeleteMerchandisePopup
+        onUpdated={() => {
+          setEditOpen(false);
+          refetch();
+        }}
+      />
+      <DeleteMerchandisePopup
         merchandise={deleteOpen && data ? data : null}
         onOpenChange={(open) => {
           if (!open) setDeleteOpen(false);
         }}
         onDeleted={() => router.push("/merchandises")}
-      /> */}
+      />
     </div>
   );
 }

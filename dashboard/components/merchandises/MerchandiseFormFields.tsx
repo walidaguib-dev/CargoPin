@@ -13,7 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CARGO_TYPES, type MerchandiseFormValues } from "@/lib/merchandises/types";
+import {
+  CARGO_TYPE_LABELS,
+  CARGO_TYPES,
+  type MerchandiseFormValues,
+} from "@/lib/merchandises/types";
 
 const labelClass = "text-[13px] font-medium text-[#374151]";
 const inputClass =
@@ -79,7 +83,7 @@ export function MerchandiseFormFields() {
               <SelectContent>
                 {CARGO_TYPES.map((t) => (
                   <SelectItem key={t} value={t}>
-                    {t}
+                    {CARGO_TYPE_LABELS[t]}
                   </SelectItem>
                 ))}
               </SelectContent>

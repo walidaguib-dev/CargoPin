@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces;
 using Domain.Requests.MerchandiseAreaPositions;
 using Infrastructure.Data;
@@ -74,6 +75,13 @@ namespace Infrastructure.Repositories
             position.IsEmergencyPlacement = request.IsEmergencyPlacement;
             position.Notes = request.Notes;
             position.UpdatedAt = DateTime.UtcNow;
+            position.state = Enum.TryParse<PositionState>(
+                request.PositionState,
+                false,
+                out var state
+            )
+                ? state
+                : PositionState.active;
 
             await _context.SaveChangesAsync();
             return true;

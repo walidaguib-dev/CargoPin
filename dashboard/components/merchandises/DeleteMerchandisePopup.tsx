@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
+import { deleteMerchandise } from "@/lib/merchandises/api";
 
 import type { Merchandise } from "@/lib/merchandises/types";
 
@@ -19,9 +22,24 @@ export function DeleteMerchandisePopup({
   onOpenChange,
   onDeleted,
 }: DeleteMerchandisePopupProps) {
+  const { accessToken } = useAuth();
+  const [isDeleting, setIsDeleting] = useState(false);
   const open = merchandise !== null;
 
-  const handleConfirm = async () => {};
+  const handleConfirm = async () => {
+    if (!merchandise) return;
+    setIsDeleting(true);
+    try {
+      await deleteMerchandise(merchandise.id, accessToken);
+      toast.success("Merchandise deleted");
+      onOpenChange(false);
+      onDeleted?.(merchandise.id);
+    } catch {
+      toast.error("Failed to delete merchandise");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -48,7 +66,7 @@ export function DeleteMerchandisePopup({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            // disabled={deleteMutation.isPending}
+            disabled={isDeleting}
             className="h-9 rounded-lg border-[#E2E8F0] bg-white px-3 text-[14px] font-medium text-[#374151]"
           >
             Cancel
@@ -56,17 +74,17 @@ export function DeleteMerchandisePopup({
           <Button
             type="button"
             onClick={handleConfirm}
-            // disabled={deleteMutation.isPending}
+            disabled={isDeleting}
             className="h-9 gap-1.5 rounded-lg bg-[#EF4444] px-3 text-[14px] font-semibold text-white hover:bg-[#DC2626]"
           >
-            {/* {deleteMutation.isPending ? (
+            {isDeleting ? (
               <>
                 <Loader2 size={14} className="animate-spin" />
                 Deleting...
               </>
             ) : (
               "Delete"
-            )} */}
+            )}
           </Button>
         </div>
       </AlertDialogContent>

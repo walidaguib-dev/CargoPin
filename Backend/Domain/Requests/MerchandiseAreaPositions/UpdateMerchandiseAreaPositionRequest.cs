@@ -4,6 +4,7 @@ namespace Domain.Requests.MerchandiseAreaPositions
     {
         public int? FileUploadsId { get; set; }
         public bool IsEmergencyPlacement { get; set; }
+        public string PositionState { get; set; } = null!;
         public string? Notes { get; set; }
     }
 }

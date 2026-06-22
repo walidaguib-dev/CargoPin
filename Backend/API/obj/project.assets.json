@@ -6892,35 +6892,36 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Walid Aguib\\.nuget\\packages\\": {}
+    "/home/walidaguib7/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\CargoPin\\Backend\\API\\API.csproj",
+      "projectUniqueName": "/home/walidaguib7/net/CargoPin/Backend/API/API.csproj",
       "projectName": "API",
-      "projectPath": "D:\\CargoPin\\Backend\\API\\API.csproj",
-      "packagesPath": "C:\\Users\\Walid Aguib\\.nuget\\packages\\",
-      "outputPath": "D:\\CargoPin\\Backend\\API\\obj\\",
+      "projectPath": "/home/walidaguib7/net/CargoPin/Backend/API/API.csproj",
+      "packagesPath": "/home/walidaguib7/.nuget/packages/",
+      "outputPath": "/home/walidaguib7/net/CargoPin/Backend/API/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Walid Aguib\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/walidaguib7/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
+        "/usr/lib/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "D:\\CargoPin\\Backend\\Application\\Application.csproj": {
-              "projectPath": "D:\\CargoPin\\Backend\\Application\\Application.csproj"
+            "/home/walidaguib7/net/CargoPin/Backend/Application/Application.csproj": {
+              "projectPath": "/home/walidaguib7/net/CargoPin/Backend/Application/Application.csproj"
             },
-            "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj": {
-              "projectPath": "D:\\CargoPin\\Backend\\Infrastructure\\Infrastructure.csproj"
+            "/home/walidaguib7/net/CargoPin/Backend/Infrastructure/Infrastructure.csproj": {
+              "projectPath": "/home/walidaguib7/net/CargoPin/Backend/Infrastructure/Infrastructure.csproj"
             }
           }
         }
@@ -7034,7 +7035,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.109/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

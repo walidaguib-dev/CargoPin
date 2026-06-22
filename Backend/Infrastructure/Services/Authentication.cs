@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Domain.Entities;
 using Infrastructure.Data;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google; // ← NEW
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -73,44 +71,7 @@ namespace Infrastructure.Services
                             return Task.CompletedTask;
                         },
                     };
-                })
-                // ─── NEW: COOKIE SCHEME (scratch space for Google OAuth dance) ──
-                .AddCookie(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    options =>
-                    {
-                        // This cookie is ONLY used as temporary storage during the
-                        // Google OAuth redirect flow. Real auth is JWT.
-                        options.Cookie.Name = "cargopin.oauth";
-                        options.Cookie.HttpOnly = true;
-                        options.Cookie.SameSite = SameSiteMode.Lax;
-                        options.ExpireTimeSpan = TimeSpan.FromMinutes(5); // OAuth dance is fast
-                    }
-                )
-                // ─── NEW: GOOGLE PROVIDER ─────────────────────────────────────
-                .AddGoogle(
-                    GoogleDefaults.AuthenticationScheme,
-                    options =>
-                    {
-                        options.ClientId = builder.Configuration["Google:ClientId"]!;
-                        options.ClientSecret = builder.Configuration["Google:ClientSecret"]!;
-                        options.CallbackPath = builder.Configuration["Google:CallbackPath"]!;
-
-                        // Use the cookie scheme as temporary storage during the OAuth dance
-                        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-
-                        options.SaveTokens = true;
-
-                        // Fix "oauth state was missing or invalid" on HTTP (dev)
-                        // The correlation cookie validates the CSRF state on Google's callback.
-                        // Default is SameSite=None+Secure which breaks over plain HTTP.
-                        options.CorrelationCookie.SameSite = SameSiteMode.Lax;
-                        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-
-                        options.Scope.Add("email");
-                        options.Scope.Add("profile");
-                    }
-                );
+                });
 
             return services;
         }

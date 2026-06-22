@@ -9,7 +9,6 @@ namespace Domain.Entities
         public DateTime ArrivalDate { get; set; }
         public ShipmentStatus Status { get; set; }
         public string? Note { get; set; }
-
         public int ClientId { get; set; }
         public Client Client { get; set; } = null!;
 

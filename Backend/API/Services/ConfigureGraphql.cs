@@ -18,6 +18,10 @@ namespace API.Services
             services
                 .AddGraphQLServer()
                 .AddGraphQL()
+                .ModifyCostOptions(options =>
+                {
+                    options.MaxFieldCost = 10000;
+                })
                 .AddProjections()
                 .AddSorting()
                 .AddFiltering()

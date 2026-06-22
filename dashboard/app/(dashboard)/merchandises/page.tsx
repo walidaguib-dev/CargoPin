@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Loader2, Plus, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CARGO_TYPES, type Merchandise } from "@/lib/merchandises/types";
+import {
+  CARGO_TYPE_LABELS,
+  CARGO_TYPES,
+  type CargoType,
+  type Merchandise,
+} from "@/lib/merchandises/types";
+import { useMerchandises } from "@/lib/merchandises/hooks";
 
 import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
 
@@ -25,15 +31,20 @@ import { DeleteMerchandisePopup } from "@/components/merchandises/DeleteMerchand
 
 export default function MerchandisesPage() {
   const [search, setSearch] = useState("");
-  const [cargoType, setCargoType] = useState<string>("all");
+  const [cargoType, setCargoType] = useState<CargoType | "all">("all");
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<Merchandise | null>(null);
   const [deleting, setDeleting] = useState<Merchandise | null>(null);
 
   const debouncedSearch = useDebouncedValue(search, 300);
 
-  // const items = data ?? [];
-  // const isEmpty = !isLoading && !isError && items.length === 0;
+  const { items, isLoading, isError, hasNextPage, isLoadingMore, loadMore, refetch } =
+    useMerchandises({
+      search: debouncedSearch,
+      cargoType: cargoType === "all" ? undefined : cargoType,
+    });
+
+  const isEmpty = !isLoading && !isError && items.length === 0;
 
   return (
     <div>
@@ -69,7 +80,10 @@ export default function MerchandisesPage() {
             className="h-10 rounded-lg border-[#E2E8F0] pl-9 text-[14px] focus-visible:ring-[#0EA5E9]"
           />
         </div>
-        <Select value={cargoType} onValueChange={setCargoType}>
+        <Select
+          value={cargoType}
+          onValueChange={(v) => setCargoType(v as CargoType | "all")}
+        >
           <SelectTrigger className="h-10 w-48 rounded-lg border-[#E2E8F0] text-[14px] focus-visible:ring-[#0EA5E9]">
             <SelectValue />
           </SelectTrigger>
@@ -77,14 +91,14 @@ export default function MerchandisesPage() {
             <SelectItem value="all">All Types</SelectItem>
             {CARGO_TYPES.map((t) => (
               <SelectItem key={t} value={t}>
-                {t}
+                {CARGO_TYPE_LABELS[t]}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      {/* <div className="mt-6">
+      <div className="mt-6">
         {isLoading ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -98,30 +112,61 @@ export default function MerchandisesPage() {
         ) : isEmpty ? (
           <EmptyState onCreate={() => setCreateOpen(true)} />
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((m : Merchandise) => (
-              <MerchandiseCard
-                key={m.id}
-                merchandise={m}
-                onEdit={setEditing}
-                onDelete={setDeleting}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {items.map((m) => (
+                <MerchandiseCard
+                  key={m.id}
+                  merchandise={m}
+                  onEdit={setEditing}
+                  onDelete={setDeleting}
+                />
+              ))}
+            </div>
+            {hasNextPage ? (
+              <div className="mt-6 flex justify-center">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={loadMore}
+                  disabled={isLoadingMore}
+                  className="h-10 gap-1.5 rounded-lg border-[#E2E8F0] bg-white px-4 text-[14px] font-medium text-[#374151]"
+                >
+                  {isLoadingMore ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    "Load more"
+                  )}
+                </Button>
+              </div>
+            ) : null}
+          </>
         )}
-      </div> */}
+      </div>
 
-      <CreateMerchandiseModal open={createOpen} onOpenChange={setCreateOpen} />
+      <CreateMerchandiseModal
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreated={refetch}
+      />
       <EditMerchandiseModal
         merchandise={editing}
         onOpenChange={(open) => {
           if (!open) setEditing(null);
         }}
+        onUpdated={refetch}
       />
       <DeleteMerchandisePopup
         merchandise={deleting}
         onOpenChange={(open) => {
           if (!open) setDeleting(null);
+        }}
+        onDeleted={() => {
+          setDeleting(null);
+          refetch();
         }}
       />
     </div>

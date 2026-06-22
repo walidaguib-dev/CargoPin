@@ -82,9 +82,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
-                    b.Property<int?>("MerchandiseId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -99,8 +96,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MerchandiseId");
 
                     b.HasIndex("VesselId");
 
@@ -217,6 +212,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("ZoneId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("state")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -691,10 +689,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Client", b =>
                 {
-                    b.HasOne("Domain.Entities.Merchandise", null)
-                        .WithMany("Clients")
-                        .HasForeignKey("MerchandiseId");
-
                     b.HasOne("Domain.Entities.Vessel", null)
                         .WithMany("Clients")
                         .HasForeignKey("VesselId");
@@ -796,7 +790,7 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Merchandise", "Merchandise")
-                        .WithMany()
+                        .WithMany("Shipments")
                         .HasForeignKey("MerchandiseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -886,7 +880,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Merchandise", b =>
                 {
-                    b.Navigation("Clients");
+                    b.Navigation("Shipments");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>

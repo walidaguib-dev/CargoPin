@@ -9,7 +9,6 @@ import { z } from "zod";
 import { Loader2, XCircle } from "lucide-react";
 
 import { AuthCard } from "@/components/auth/AuthCard";
-import { GoogleButton } from "@/components/auth/GoogleButton";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { PasswordStrength } from "@/components/auth/PasswordStrength";
 import { Button } from "@/components/ui/button";
@@ -61,6 +60,8 @@ export default function RegisterPage() {
           }),
         },
       );
+
+      console.log(res.body);
 
       if (res.status === 201) {
         router.push("/auth/check-email");
@@ -160,19 +161,6 @@ export default function RegisterPage() {
             "Create Account"
           )}
         </Button>
-
-        <div className="relative my-5">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[#E2E8F0]" />
-          </div>
-          <div className="relative flex justify-center text-[12px]">
-            <span className="bg-white px-3 text-[#9CA3AF]">
-              or continue with
-            </span>
-          </div>
-        </div>
-
-        <GoogleButton />
 
         <p className="text-[13px] text-[#64748B] text-center mt-4">
           Already have an account?{" "}
