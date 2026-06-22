@@ -11,8 +11,6 @@ namespace Domain.Entities
         public int Id { get; set; }
         public string Name { get; set; } = null!;
         public string? IMONumber { get; set; }
-        public DateTime? ArrivalDate { get; set; }
-        public DateTime? DepartureDate { get; set; }
         public VesselStatus Status { get; set; }
 
         public List<Client> Clients { get; set; } = [];

@@ -20,8 +20,6 @@ namespace Application.Vessels
             {
                 IMONumber = dto.IMONumber,
                 Name = dto.Name,
-                ArrivalDate = dto.ArrivalDate,
-                DepartureDate = dto.DepartureDate,
                 Status = status,
             };
         }
@@ -33,8 +31,6 @@ namespace Application.Vessels
                 Name = dto.Name,
                 Status = dto.Status,
                 IMONumber = dto.IMONumber,
-                ArrivalDate = dto.ArrivalDate,
-                DepartureDate = dto.DepartureDate,
             };
         }
     }

@@ -27,11 +27,6 @@ namespace Application.Vessels.Validators
                 .WithMessage("Status is required.")
                 .Must(s => new[] { "Expected", "Berthed", "Departed" }.Contains(s))
                 .WithMessage("Status must be Expected, Berthed, or Departed.");
-
-            RuleFor(x => x.Dto.DepartureDate)
-                .GreaterThan(x => x.Dto.ArrivalDate)
-                .WithMessage("Departure date must be after arrival date.")
-                .When(x => x.Dto.ArrivalDate.HasValue && x.Dto.DepartureDate.HasValue);
         }
     }
 }

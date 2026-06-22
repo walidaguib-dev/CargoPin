@@ -7,7 +7,7 @@ export function middleware(request: NextRequest) {
   const isAuthenticated = request.cookies.has("auth_session");
 
   if (isAuthenticated && AUTH_ROUTES.some((r) => pathname.startsWith(r))) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();

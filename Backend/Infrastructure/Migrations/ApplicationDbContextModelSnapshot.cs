@@ -461,12 +461,6 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("ArrivalDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DepartureDate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("IMONumber")
                         .HasColumnType("text");
 

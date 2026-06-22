@@ -72,8 +72,6 @@ namespace Infrastructure.Repositories
                 .ExecuteUpdateAsync(p =>
                     p.SetProperty(x => x.Name, request.Name)
                         .SetProperty(x => x.IMONumber, request.IMONumber)
-                        .SetProperty(x => x.ArrivalDate, request.ArrivalDate)
-                        .SetProperty(x => x.DepartureDate, request.DepartureDate)
                         .SetProperty(x => x.Status, status)
                 );
             return affectedRow == 0 ? null : true;

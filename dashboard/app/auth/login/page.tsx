@@ -57,7 +57,7 @@ export default function LoginPage() {
       if (res.ok) {
         const data = (await res.json()) as LoginResponse;
         login(data.access_Token, data.refresh_Token);
-        router.push("/dashboard");
+        router.push("/");
       } else if (res.status === 401) {
         setError("root", { message: "Invalid username or password" });
       } else if (res.status === 403) {

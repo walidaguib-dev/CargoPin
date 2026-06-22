@@ -9,8 +9,6 @@ namespace Application.Vessels.Dtos
     {
         public string Name { get; set; } = null!;
         public string? IMONumber { get; set; }
-        public DateTime? ArrivalDate { get; set; }
-        public DateTime? DepartureDate { get; set; }
         public string Status { get; set; } = string.Empty;
     }
 }

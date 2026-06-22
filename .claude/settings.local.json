@@ -12,7 +12,10 @@
       "Bash(xargs -I{} grep -l \"Url\\\\|Port\" {})",
       "Bash(npx tsc *)",
       "Bash(printenv)",
-      "Bash(echo \"exit:$?\")"
+      "Bash(echo \"exit:$?\")",
+      "Bash(bunx tsc *)",
+      "Bash(dotnet tool *)",
+      "Bash(dotnet ef *)"
     ]
   }
 }
