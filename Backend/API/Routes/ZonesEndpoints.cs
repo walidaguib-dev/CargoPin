@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Zones.Commands;
 using Application.Zones.Dtos;
+using Application.Zones.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,15 @@ namespace API.Routes
         public static void MapZonesEndpoints(this WebApplication app)
         {
             var group = app.MapGroup("/api/zones").WithTags("Zones");
+
+            group.MapGet(
+                "geojson",
+                async (ISender sender) =>
+                {
+                    var result = await sender.Send(new GetZonesGeoJsonQuery());
+                    return Results.Ok(result);
+                }
+            );
 
             group
                 .MapPost(

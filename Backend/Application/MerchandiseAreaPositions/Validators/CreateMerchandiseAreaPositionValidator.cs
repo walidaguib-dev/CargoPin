@@ -20,12 +20,8 @@ namespace Application.MerchandiseAreaPositions.Validators
             RuleFor(x => x.Dto.Longitude)
                 .InclusiveBetween(-180, 180).WithMessage("Longitude must be between -180 and 180.");
 
-            RuleFor(x => x.Dto.FileUploadId)
-                .GreaterThan(0).WithMessage("FileUploadId must be a valid positive integer.")
-                .When(x => x.Dto.FileUploadId.HasValue);
-
             RuleFor(x => x.Dto.Notes)
-                .MaximumLength(1000).WithMessage("Notes must not exceed 1000 characters.")
+                .MaximumLength(500).WithMessage("Notes must not exceed 500 characters.")
                 .When(x => x.Dto.Notes is not null);
 
             RuleFor(x => x.TallymanId).NotEmpty().WithMessage("TallymanId is required.");

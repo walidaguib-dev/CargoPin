@@ -1,4 +1,5 @@
-﻿using Application.Common;
+﻿using API.Hubs;
+using Application.Common;
 using Domain.Interfaces;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -33,6 +34,8 @@ namespace API.Services
             );
 
             // Register API services here
+            services.AddScoped<IPositionsNotifier, PositionsNotifier>();
+
             return services;
         }
     }

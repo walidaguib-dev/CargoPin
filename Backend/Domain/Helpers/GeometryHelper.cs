@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.GeoJson;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 
@@ -38,6 +39,17 @@ namespace Domain.Helpers
         {
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
             return geometryFactory.CreatePoint(new Coordinate(longitude, latitude)); // X=Lon, Y=Lat
+        }
+
+        public static GeoJsonPoint ToGeoJsonPoint(Point point) =>
+            new() { Coordinates = [point.X, point.Y] };
+
+        public static GeoJsonPolygon ToGeoJsonPolygon(Polygon polygon)
+        {
+            var ring = polygon
+                .Shell.Coordinates.Select(c => new double[] { c.X, c.Y })
+                .ToArray();
+            return new GeoJsonPolygon { Coordinates = [ring] };
         }
     }
 }

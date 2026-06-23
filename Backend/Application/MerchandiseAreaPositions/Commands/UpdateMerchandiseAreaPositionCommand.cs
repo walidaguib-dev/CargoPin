@@ -9,6 +9,6 @@ namespace Application.MerchandiseAreaPositions.Commands
             IInvalidateCache
     {
         public List<string> CacheKeys => [$"position_{Id}"];
-        public List<string> CacheTags => ["position", "positions"];
+        public List<string> CacheTags => ["position", "positions", "positions:geojson"];
     }
 }

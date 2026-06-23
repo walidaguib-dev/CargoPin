@@ -144,6 +144,7 @@ export async function fetchMerchandises(options: {
   search?: string;
   cargoType?: CargoType;
   after?: string | null;
+  first?: number;
 }): Promise<MerchandisesPage> {
   const filters: Record<string, unknown>[] = [];
   if (options.search?.trim()) {
@@ -157,7 +158,7 @@ export async function fetchMerchandises(options: {
     filters.length === 0 ? undefined : filters.length === 1 ? filters[0] : { and: filters };
 
   const data = await fetchGraphQL<MerchandisesConnection>(MERCHANDISES_QUERY, {
-    first: PAGE_SIZE,
+    first: options.first ?? PAGE_SIZE,
     after: options.after ?? undefined,
     where,
     order: [{ description: "ASC" }],

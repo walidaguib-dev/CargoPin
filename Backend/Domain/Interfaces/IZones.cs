@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.Entities;
+using Domain.GeoJson;
 using Domain.Requests.Zones;
 
 namespace Domain.Interfaces
@@ -14,5 +15,6 @@ namespace Domain.Interfaces
         public Task<Zone> CreateAsync(Zone zone);
         public Task<bool?> DeleteAsync(int Id);
         public Task<bool?> UpdateAsync(int Id, UpdateZoneRequest request);
+        public Task<GeoJsonFeatureCollection> GetActiveZonesGeoJsonAsync();
     }
 }

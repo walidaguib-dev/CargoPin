@@ -1,5 +1,6 @@
 using Application.Areas.Commands;
 using Application.Areas.Dtos;
+using Application.Areas.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,15 @@ namespace API.Routes
         public static void MapAreasEndpoints(this WebApplication app)
         {
             var group = app.MapGroup("/api/areas").WithTags("Areas");
+
+            group.MapGet(
+                "geojson",
+                async (ISender sender) =>
+                {
+                    var result = await sender.Send(new GetAreasGeoJsonQuery());
+                    return Results.Ok(result);
+                }
+            );
 
             group
                 .MapPost(

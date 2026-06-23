@@ -1,3 +1,4 @@
+using API.Hubs;
 using API.Routes.Extensions;
 using API.Services;
 using Application;
@@ -110,4 +111,5 @@ app.UseSerilogRequestLogging();
 app.GetApiEndpoints();
 app.UseHangfireDashboard("/hangfire", new DashboardOptions { Authorization = [new JobsAuth()] });
 app.MapGraphQL();
+app.MapHub<PositionsHub>("/hubs/positions");
 app.Run();

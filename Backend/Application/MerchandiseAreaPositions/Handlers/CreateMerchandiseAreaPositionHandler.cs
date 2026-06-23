@@ -1,18 +1,19 @@
 using Application.MerchandiseAreaPositions.Commands;
-using Domain.Entities;
-using Domain.Enums;
+using Application.MerchandiseAreaPositions.Dtos;
 using Domain.Helpers;
 using Domain.Interfaces;
+using Domain.Requests.MerchandiseAreaPositions;
 using MediatR;
 
 namespace Application.MerchandiseAreaPositions.Handlers
 {
     public class CreateMerchandiseAreaPositionHandler(
         IMerchandiseAreaPositions positionsService,
-        IShipments shipmentsService
-    ) : IRequestHandler<CreateMerchandiseAreaPositionCommand, MerchandiseAreaPosition>
+        IShipments shipmentsService,
+        IPositionsNotifier notifier
+    ) : IRequestHandler<CreateMerchandiseAreaPositionCommand, CreatePositionResultDto>
     {
-        public async Task<MerchandiseAreaPosition> Handle(
+        public async Task<CreatePositionResultDto> Handle(
             CreateMerchandiseAreaPositionCommand request,
             CancellationToken cancellationToken
         )
@@ -25,38 +26,49 @@ namespace Application.MerchandiseAreaPositions.Handlers
 
             var point = GeometryHelper.ToPoint(dto.Latitude, dto.Longitude);
 
-            var zone = await positionsService.FindContainingZoneAsync(point);
+            var area = await positionsService.FindContainingAreaAsync(point);
+            var zone =
+                area is not null
+                    ? area.Zone
+                    : await positionsService.FindContainingZoneAsync(point);
 
-            int? zoneId = null;
-            int? areaId = null;
-            int? designatedMerchandiseId = null;
+            var isEmergencyPlacement = area is null && zone is null;
 
-            if (zone is not null)
+            var position = dto.MapToEntity(
+                request.TallymanId,
+                point,
+                area?.Id,
+                zone?.Id,
+                isEmergencyPlacement
+            );
+            position = await positionsService.CreateAsync(position);
+
+            await notifier.NotifyPositionCreatedAsync(
+                new PositionCreatedNotification
+                {
+                    PositionId = position.Id,
+                    ShipmentId = position.ShipmentId,
+                    ClientName = shipment.Client.Name,
+                    MerchandiseDescription = shipment.Merchandise.Description,
+                    VesselName = shipment.Vessel.Name,
+                    Latitude = position.Location.Y,
+                    Longitude = position.Location.X,
+                    AreaName = area?.Name,
+                    ZoneName = zone?.Name,
+                    IsEmergencyPlacement = position.IsEmergencyPlacement,
+                    PlacedAt = position.PlacedAt,
+                }
+            );
+
+            return new CreatePositionResultDto
             {
-                zoneId = zone.Id;
-
-                if (zone.Type == ZoneType.Hangar)
-                {
-                    designatedMerchandiseId = zone.DesignatedMerchandiseId;
-                }
-                else
-                {
-                    var area = await positionsService.FindContainingAreaAsync(zone.Id, point);
-                    if (area is not null)
-                    {
-                        areaId = area.Id;
-                        designatedMerchandiseId = area.DesignatedMerchandiseId;
-                    }
-                }
-            }
-
-            var isEmergency =
-                designatedMerchandiseId.HasValue
-                && designatedMerchandiseId != shipment.MerchandiseId;
-
-            var position = dto.MapToEntity(request.TallymanId, point, zoneId, areaId, isEmergency);
-
-            return await positionsService.CreateAsync(position);
+                Id = position.Id,
+                AreaId = position.AreaId,
+                ZoneId = position.ZoneId,
+                AreaName = area?.Name,
+                ZoneName = zone?.Name,
+                IsEmergencyPlacement = position.IsEmergencyPlacement,
+            };
         }
     }
 }

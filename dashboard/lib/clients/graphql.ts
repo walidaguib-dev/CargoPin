@@ -87,13 +87,14 @@ const PAGE_SIZE = 20;
 export async function fetchClients(options: {
   search?: string;
   after?: string | null;
+  first?: number;
 }): Promise<ClientsPage> {
   const where = options.search?.trim()
     ? { name: { contains: options.search.trim() } }
     : undefined;
 
   const data = await fetchGraphQL<ClientsConnection>(CLIENTS_QUERY, {
-    first: PAGE_SIZE,
+    first: options.first ?? PAGE_SIZE,
     after: options.after ?? undefined,
     where,
     order: [{ name: "ASC" }],

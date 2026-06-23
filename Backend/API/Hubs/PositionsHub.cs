@@ -1,0 +1,6 @@
+using Microsoft.AspNetCore.SignalR;
+
+namespace API.Hubs
+{
+    public class PositionsHub : Hub { }
+}

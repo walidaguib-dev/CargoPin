@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { LogOut, MoreHorizontal, User } from "lucide-react";
 
 import {
@@ -11,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { logout } from "@/lib/auth";
 
 interface UserFooterProps {
   name: string;
@@ -19,16 +19,6 @@ interface UserFooterProps {
 }
 
 export function UserFooter({ name, role, initials }: UserFooterProps) {
-  const router = useRouter();
-
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-    }
-    router.push("/auth/login");
-  };
-
   return (
     <div className="border-t border-[#F1F5F9] p-3">
       <div className="flex items-center gap-2.5 rounded-lg p-1.5">
@@ -70,7 +60,7 @@ export function UserFooter({ name, role, initials }: UserFooterProps) {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={handleLogout}
+              onClick={logout}
               className="text-[#DC2626] focus:bg-[#FEF2F2] focus:text-[#DC2626]"
             >
               <LogOut size={15} />

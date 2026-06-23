@@ -125,6 +125,7 @@ export async function fetchVessels(options: {
   search?: string;
   status?: VesselStatus;
   after?: string | null;
+  first?: number;
 }): Promise<VesselsPage> {
   const filters: Record<string, unknown>[] = [];
   if (options.search?.trim()) {
@@ -138,7 +139,7 @@ export async function fetchVessels(options: {
     filters.length === 0 ? undefined : filters.length === 1 ? filters[0] : { and: filters };
 
   const data = await fetchGraphQL<VesselsConnection>(VESSELS_QUERY, {
-    first: PAGE_SIZE,
+    first: options.first ?? PAGE_SIZE,
     after: options.after ?? undefined,
     where,
     order: [{ name: "ASC" }],

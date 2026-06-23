@@ -11,18 +11,17 @@ namespace Application.MerchandiseAreaPositions
             this CreateMerchandiseAreaPositionDto dto,
             string tallymanId,
             Point point,
-            int? zoneId,
             int? areaId,
-            bool isEmergency
+            int? zoneId,
+            bool isEmergencyPlacement
         ) =>
             new()
             {
                 ShipmentId = dto.ShipmentId,
                 Location = point,
-                ZoneId = zoneId,
                 AreaId = areaId,
-                FileUploadsId = dto.FileUploadId,
-                IsEmergencyPlacement = isEmergency,
+                ZoneId = zoneId,
+                IsEmergencyPlacement = isEmergencyPlacement,
                 Notes = dto.Notes,
                 TallymanId = tallymanId,
                 PlacedAt = DateTime.UtcNow,
@@ -30,12 +29,6 @@ namespace Application.MerchandiseAreaPositions
 
         public static UpdateMerchandiseAreaPositionRequest MapToRequest(
             this UpdateMerchandiseAreaPositionDto dto
-        ) =>
-            new()
-            {
-                FileUploadsId = dto.FileUploadId,
-                IsEmergencyPlacement = dto.IsEmergencyPlacement,
-                Notes = dto.Notes,
-            };
+        ) => new() { Notes = dto.Notes, State = dto.State };
     }
 }

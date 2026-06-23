@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Enums;
+using Domain.GeoJson;
 using Domain.Helpers;
 using Domain.Interfaces;
 using Domain.Requests.Zones;
@@ -68,6 +69,40 @@ namespace Infrastructure.Repositories
 
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<GeoJsonFeatureCollection> GetActiveZonesGeoJsonAsync()
+        {
+            var result = await _cachingService.GetOrSetAsync(
+                "zones:geojson",
+                async token =>
+                {
+                    var zones = await _context
+                        .Zones.AsNoTracking()
+                        .Where(z => z.IsActive && z.Boundary != null)
+                        .ToListAsync(token);
+
+                    return new GeoJsonFeatureCollection
+                    {
+                        Features = zones
+                            .Select(z => new GeoJsonFeature
+                            {
+                                Geometry = GeometryHelper.ToGeoJsonPolygon(z.Boundary!),
+                                Properties = new ZoneGeoJsonProperties
+                                {
+                                    Id = z.Id,
+                                    Name = z.Name,
+                                    Code = z.Code,
+                                    Type = z.Type.ToString(),
+                                },
+                            })
+                            .ToList(),
+                    };
+                },
+                TimeSpan.FromMinutes(30),
+                ["zones"]
+            );
+            return result ?? new GeoJsonFeatureCollection();
         }
     }
 }

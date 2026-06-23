@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Application.MerchandiseAreaPositions.Commands;
 using Application.MerchandiseAreaPositions.Dtos;
+using Application.MerchandiseAreaPositions.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,10 +25,19 @@ namespace API.Routes
                         var tallymanId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
                         var command = new CreateMerchandiseAreaPositionCommand(dto, tallymanId);
                         var result = await sender.Send(command);
-                        return Results.Created();
+                        return Results.Created($"/api/positions/{result.Id}", result);
                     }
                 )
                 .RequireAuthorization();
+
+            group.MapGet(
+                "geojson",
+                async (ISender sender) =>
+                {
+                    var result = await sender.Send(new GetMerchandiseAreaPositionsGeoJsonQuery());
+                    return Results.Ok(result);
+                }
+            );
 
             group
                 .MapDelete(

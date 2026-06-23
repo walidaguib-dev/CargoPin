@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { AuthGuard } from "@/components/dashboard/AuthGuard";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { TopBar } from "@/components/dashboard/TopBar";
 import { Inter } from "next/font/google";
@@ -15,7 +16,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar userInitials="WB" />
         <main className="flex-1 overflow-auto bg-[#F8FAFC] p-8">
-          {children}
+          <AuthGuard>{children}</AuthGuard>
         </main>
       </div>
     </div>
