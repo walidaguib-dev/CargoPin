@@ -10,13 +10,10 @@ using NetTopologySuite.Geometries;
 
 namespace Infrastructure.Repositories
 {
-    public class MerchandiseAreaPositionsRepository(
-        ApplicationDbContext context,
-        ICaching cachingService
-    ) : IMerchandiseAreaPositions
+    public class MerchandiseAreaPositionsRepository(ApplicationDbContext context)
+        : IMerchandiseAreaPositions
     {
         private readonly ApplicationDbContext _context = context;
-        private readonly ICaching _cachingService = cachingService;
 
         public async Task<MerchandiseAreaPosition> CreateAsync(MerchandiseAreaPosition position)
         {
@@ -33,38 +30,30 @@ namespace Infrastructure.Repositories
             return result is 0 ? null : true;
         }
 
+        // Deliberately uncached for now — diagnosing whether FusionCache/Redis is
+        // still the cause of "Unexpected Execution Error" on the positions GraphQL
+        // list query even after registering GeoJsonConverterFactory. If positions
+        // load fine with caching off here, the Tallyman/Shipment/Area/FileUploads
+        // navigation graph (not just Location) is what's failing to serialize.
         public async Task<MerchandiseAreaPosition?> GetPositionAsync(int id)
         {
-            var key = $"position_{id}";
-            return await _cachingService.GetOrSetAsync(
-                key,
-                async token =>
-                    await _context
-                        .MerchandiseAreaPositions.Include(x => x.Area)
-                        .Include(x => x.Shipment)
-                        .Include(x => x.Tallyman)
-                        .Include(x => x.FileUploads)
-                        .FirstOrDefaultAsync(x => x.Id == id, token),
-                TimeSpan.FromMinutes(10),
-                ["position"]
-            );
+            return await _context
+                .MerchandiseAreaPositions.Include(x => x.Area)
+                .Include(x => x.Shipment)
+                .Include(x => x.Tallyman)
+                .Include(x => x.FileUploads)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IQueryable<MerchandiseAreaPosition>> GetPositionsAsync()
         {
-            var result = await _cachingService.GetOrSetAsync(
-                "positions",
-                async token =>
-                    await _context
-                        .MerchandiseAreaPositions.Include(x => x.Area)
-                        .Include(x => x.Shipment)
-                        .Include(x => x.Tallyman)
-                        .Include(x => x.FileUploads)
-                        .ToListAsync(token),
-                TimeSpan.FromMinutes(10),
-                ["positions"]
-            );
-            return (result ?? []).AsQueryable();
+            var result = await _context
+                .MerchandiseAreaPositions.Include(x => x.Area)
+                .Include(x => x.Shipment)
+                .Include(x => x.Tallyman)
+                .Include(x => x.FileUploads)
+                .ToListAsync();
+            return result.AsQueryable();
         }
 
         public async Task<bool?> UpdateAsync(int id, UpdateMerchandiseAreaPositionRequest request)
@@ -112,51 +101,47 @@ namespace Infrastructure.Repositories
                 .OrderBy(a => a.Id)
                 .FirstOrDefaultAsync();
 
+        // Deliberately uncached — see ZonesRepository.GetActiveZonesGeoJsonAsync
+        // for why (same FusionCache/Redis staleness issue, same fix). The
+        // dashboard map already stays current moment-to-moment via the
+        // PositionCreated/PositionReleased SignalR events, so caching this
+        // bought very little anyway — it only ever mattered for the first load.
         public async Task<GeoJsonFeatureCollection> GetActivePositionsGeoJsonAsync()
         {
-            var result = await _cachingService.GetOrSetAsync(
-                "positions:geojson",
-                async token =>
-                {
-                    var positions = await _context
-                        .MerchandiseAreaPositions.AsNoTracking()
-                        .Include(p => p.Shipment)
-                        .ThenInclude(s => s.Client)
-                        .Include(p => p.Shipment)
-                        .ThenInclude(s => s.Merchandise)
-                        .Include(p => p.Shipment)
-                        .ThenInclude(s => s.Vessel)
-                        .Include(p => p.Area)
-                        .Include(p => p.Zone)
-                        .Where(p => p.IsActive)
-                        .ToListAsync(token);
+            var positions = await _context
+                .MerchandiseAreaPositions.AsNoTracking()
+                .Include(p => p.Shipment)
+                .ThenInclude(s => s.Client)
+                .Include(p => p.Shipment)
+                .ThenInclude(s => s.Merchandise)
+                .Include(p => p.Shipment)
+                .ThenInclude(s => s.Vessel)
+                .Include(p => p.Area)
+                .Include(p => p.Zone)
+                .Where(p => p.IsActive)
+                .ToListAsync();
 
-                    return new GeoJsonFeatureCollection
+            return new GeoJsonFeatureCollection
+            {
+                Features = positions
+                    .Select(p => new GeoJsonFeature
                     {
-                        Features = positions
-                            .Select(p => new GeoJsonFeature
-                            {
-                                Geometry = GeometryHelper.ToGeoJsonPoint(p.Location),
-                                Properties = new PositionGeoJsonProperties
-                                {
-                                    Id = p.Id,
-                                    ClientName = p.Shipment.Client.Name,
-                                    MerchandiseDescription = p.Shipment.Merchandise.Description,
-                                    VesselName = p.Shipment.Vessel.Name,
-                                    AreaName = p.Area?.Name,
-                                    ZoneName = p.Zone?.Name,
-                                    IsEmergencyPlacement = p.IsEmergencyPlacement,
-                                    PlacedAt = p.PlacedAt,
-                                    Notes = p.Notes,
-                                },
-                            })
-                            .ToList(),
-                    };
-                },
-                TimeSpan.FromMinutes(2),
-                ["positions:geojson"]
-            );
-            return result ?? new GeoJsonFeatureCollection();
+                        Geometry = GeometryHelper.ToGeoJsonPoint(p.Location),
+                        Properties = new PositionGeoJsonProperties
+                        {
+                            Id = p.Id,
+                            ClientName = p.Shipment.Client.Name,
+                            MerchandiseDescription = p.Shipment.Merchandise.Description,
+                            VesselName = p.Shipment.Vessel.Name,
+                            AreaName = p.Area?.Name,
+                            ZoneName = p.Zone?.Name,
+                            IsEmergencyPlacement = p.IsEmergencyPlacement,
+                            PlacedAt = p.PlacedAt,
+                            Notes = p.Notes,
+                        },
+                    })
+                    .ToList(),
+            };
         }
     }
 }

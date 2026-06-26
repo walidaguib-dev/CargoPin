@@ -181,11 +181,13 @@ export async function fetchShipments(options: {
 }
 
 // Same field selection as SHIPMENTS_QUERY, single record. GetShipment -> field
-// `shipment`; arg name is capitalized ("Id") to match the resolver's C# parameter
-// name, same quirk already seen on Merchandise's single-record query.
+// `shipment`. The argument name is plain lowercase `id` despite the resolver's C#
+// parameter being named `Id` — HotChocolate's default naming convention lowercases
+// it like any other field/argument; confirmed via live schema introspection
+// (an earlier comment here incorrectly claimed it stayed capitalized).
 const SHIPMENT_QUERY = /* GraphQL */ `
   query GetShipment($id: Int!) {
-    shipment(Id: $id) {
+    shipment(id: $id) {
       id
       blNumbers
       arrivalDate

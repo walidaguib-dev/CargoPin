@@ -3,6 +3,7 @@
 import { Bell, Menu } from "lucide-react";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useSignalR } from "@/context/SignalRContext";
 import { Sidebar } from "./Sidebar";
 
 interface TopBarProps {
@@ -11,6 +12,8 @@ interface TopBarProps {
 }
 
 export function TopBar({ hasUnread = true, userInitials }: TopBarProps) {
+  const { isConnected } = useSignalR();
+
   return (
     <header className="flex h-14 shrink-0 items-center gap-4 border-b border-[#E2E8F0] bg-white px-5">
       <div className="flex items-center">
@@ -37,6 +40,10 @@ export function TopBar({ hasUnread = true, userInitials }: TopBarProps) {
       <div className="flex-1" />
 
       <div className="flex items-center gap-2">
+        <div
+          className={`h-2 w-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+          title={isConnected ? "Live updates active" : "Disconnected"}
+        />
         <button
           type="button"
           aria-label="Notifications"

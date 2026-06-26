@@ -6,6 +6,7 @@ using FluentValidation;
 using Hangfire;
 using Infrastructure;
 using Infrastructure.Data;
+using Infrastructure.Data.Seeders;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics;
@@ -39,7 +40,14 @@ builder.Services.AddCors(options =>
         name: "AllowAll",
         policy =>
         {
-            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            policy
+                .WithOrigins(
+                    "http://localhost:3000",
+                    "http://192.168.1.11:3000" // your network URL from Next.js logs
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials(); // ← required for SignalR
         }
     );
 });
@@ -96,6 +104,9 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
     await db.Database.MigrateAsync(); // applies any pending migrations
+
+    var seeder = new CargoDataSeeder(db);
+    await seeder.SeedAsync();
 }
 
 app.SetupDocumentation();

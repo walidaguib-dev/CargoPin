@@ -8,6 +8,7 @@
   <ItemGroup>
     <!-- External Services -->
     <PackageReference Include="CloudinaryDotNet" Version="1.28.0" />
+    <PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ" Version="4.0.0" />
     <PackageReference Include="Resend" Version="0.3.0" />
     <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
     <PackageReference Include="Bogus" Version="35.6.5" />
@@ -41,25 +42,16 @@
     <!-- PostgreSQL + PostGIS -->
     <PackageReference Include="Npgsql" Version="10.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
-    <PackageReference
-      Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite"
-      Version="10.0.1"
-    />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="10.0.1" />
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
 
     <!-- Caching -->
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.4" />
     <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.5.0" />
-    <PackageReference
-      Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson"
-      Version="2.5.0"
-    />
+    <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" Version="2.5.0" />
 
     <!-- Configuration & DI -->
-    <PackageReference
-      Include="Microsoft.Extensions.Configuration.FileExtensions"
-      Version="10.0.4"
-    />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.4" />
   </ItemGroup>

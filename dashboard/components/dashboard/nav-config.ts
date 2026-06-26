@@ -1,10 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Map,
-  MapPin,
   Package,
-  Building2,
-  Square,
   Ship,
   Users,
   Boxes,
@@ -29,17 +26,14 @@ export const NAV_SECTIONS: NavSection[] = [
     id: "operations",
     label: "Operations",
     items: [
-      { id: "map",        title: "Map View",  href: "/map",        icon: Map },
-      { id: "positions",  title: "Positions", href: "/positions",  icon: MapPin },
-      { id: "shipments",  title: "Shipments", href: "/shipments",  icon: Package },
+      { id: "map",       title: "Map View",  href: "/map",       icon: Map },
+      { id: "shipments", title: "Shipments", href: "/shipments", icon: Package },
     ],
   },
   {
     id: "port-setup",
     label: "Port Setup",
     items: [
-      { id: "zones",        title: "Zones",        href: "/zones",        icon: Building2 },
-      { id: "areas",        title: "Areas",        href: "/areas",        icon: Square },
       { id: "vessels",      title: "Vessels",      href: "/vessels",      icon: Ship },
       { id: "clients",      title: "Clients",      href: "/clients",      icon: Users },
       { id: "merchandises", title: "Merchandises", href: "/merchandises", icon: Boxes },

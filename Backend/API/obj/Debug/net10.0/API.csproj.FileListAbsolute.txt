@@ -578,3 +578,5 @@ D:/CargoPin/Backend/API/bin/Debug/net10.0/Microsoft.AspNetCore.Authentication.Go
 /home/walidaguib7/net/CargoPin/Backend/API/obj/Debug/net10.0/API.pdb
 /home/walidaguib7/net/CargoPin/Backend/API/obj/Debug/net10.0/API.genruntimeconfig.cache
 /home/walidaguib7/net/CargoPin/Backend/API/obj/Debug/net10.0/ref/API.dll
+/home/walidaguib7/net/CargoPin/Backend/API/bin/Debug/net10.0/NetTopologySuite.Features.dll
+/home/walidaguib7/net/CargoPin/Backend/API/bin/Debug/net10.0/NetTopologySuite.IO.GeoJSON4STJ.dll

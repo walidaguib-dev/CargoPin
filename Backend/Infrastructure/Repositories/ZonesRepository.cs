@@ -71,38 +71,35 @@ namespace Infrastructure.Repositories
             return true;
         }
 
+        // Deliberately uncached, unlike every other read method on this repository —
+        // this only ever runs on a Map page load or an explicit refetch after a
+        // mutation, and the 30-minute FusionCache/Redis cache this used to go
+        // through repeatedly went stale whenever a Zone was inserted/updated
+        // outside the normal command pipeline (seeders, direct SQL fixes), making
+        // zones silently disappear from the map despite being in Postgres.
         public async Task<GeoJsonFeatureCollection> GetActiveZonesGeoJsonAsync()
         {
-            var result = await _cachingService.GetOrSetAsync(
-                "zones:geojson",
-                async token =>
-                {
-                    var zones = await _context
-                        .Zones.AsNoTracking()
-                        .Where(z => z.IsActive && z.Boundary != null)
-                        .ToListAsync(token);
+            var zones = await _context
+                .Zones.AsNoTracking()
+                .Where(z => z.IsActive && z.Boundary != null)
+                .ToListAsync();
 
-                    return new GeoJsonFeatureCollection
+            return new GeoJsonFeatureCollection
+            {
+                Features = zones
+                    .Select(z => new GeoJsonFeature
                     {
-                        Features = zones
-                            .Select(z => new GeoJsonFeature
-                            {
-                                Geometry = GeometryHelper.ToGeoJsonPolygon(z.Boundary!),
-                                Properties = new ZoneGeoJsonProperties
-                                {
-                                    Id = z.Id,
-                                    Name = z.Name,
-                                    Code = z.Code,
-                                    Type = z.Type.ToString(),
-                                },
-                            })
-                            .ToList(),
-                    };
-                },
-                TimeSpan.FromMinutes(30),
-                ["zones"]
-            );
-            return result ?? new GeoJsonFeatureCollection();
+                        Geometry = GeometryHelper.ToGeoJsonPolygon(z.Boundary!),
+                        Properties = new ZoneGeoJsonProperties
+                        {
+                            Id = z.Id,
+                            Name = z.Name,
+                            Code = z.Code,
+                            Type = z.Type.ToString(),
+                        },
+                    })
+                    .ToList(),
+            };
         }
     }
 }

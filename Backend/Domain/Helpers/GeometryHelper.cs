@@ -27,12 +27,12 @@ namespace Domain.Helpers
                 coordinates.Add(coordinates.First());
             }
 
-            var ring = new LinearRing([.. coordinates]);
+            var ring = geometryFactory.CreateLinearRing([.. coordinates]);
 
             if (!ring.IsValid)
                 throw new ArgumentException("Invalid polygon shape.");
 
-            return new Polygon(ring);
+            return geometryFactory.CreatePolygon(ring);
         }
 
         public static Point ToPoint(double latitude, double longitude)

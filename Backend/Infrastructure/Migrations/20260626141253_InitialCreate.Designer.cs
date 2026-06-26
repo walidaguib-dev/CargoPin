@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260621101705_InitialCreate")]
+    [Migration("20260626141253_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -95,12 +95,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("TaxId")
                         .HasColumnType("text");
 
-                    b.Property<int?>("VesselId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("VesselId");
 
                     b.ToTable("Clients");
                 });
@@ -464,12 +459,6 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("ArrivalDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DepartureDate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("IMONumber")
                         .HasColumnType("text");
 
@@ -690,13 +679,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Zone");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Client", b =>
-                {
-                    b.HasOne("Domain.Entities.Vessel", null)
-                        .WithMany("Clients")
-                        .HasForeignKey("VesselId");
-                });
-
             modelBuilder.Entity("Domain.Entities.FileUploads", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
@@ -894,11 +876,6 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("refreshTokens")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Entities.Vessel", b =>
-                {
-                    b.Navigation("Clients");
                 });
 
             modelBuilder.Entity("Domain.Entities.Zone", b =>

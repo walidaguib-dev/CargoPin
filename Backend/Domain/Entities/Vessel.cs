@@ -12,7 +12,5 @@ namespace Domain.Entities
         public string Name { get; set; } = null!;
         public string? IMONumber { get; set; }
         public VesselStatus Status { get; set; }
-
-        public List<Client> Clients { get; set; } = [];
     }
 }

@@ -54,7 +54,11 @@ namespace API.Routes
             group
                 .MapPatch(
                     "update/{Id:int}",
-                    async (int Id, [FromBody] UpdateMerchandiseAreaPositionDto dto, ISender sender) =>
+                    async (
+                        int Id,
+                        [FromBody] UpdateMerchandiseAreaPositionDto dto,
+                        ISender sender
+                    ) =>
                     {
                         var command = new UpdateMerchandiseAreaPositionCommand(Id, dto);
                         var result = await sender.Send(command);

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NetTopologySuite.IO.Converters;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
@@ -32,6 +33,14 @@ namespace Infrastructure.Services
                         new System.Text.Json.JsonSerializerOptions
                         {
                             ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                            Converters =
+                            {
+                                new GeoJsonConverterFactory(
+                                    NetTopologySuite.NtsGeometryServices.Instance.CreateGeometryFactory(
+                                        srid: 4326
+                                    )
+                                ),
+                            },
                         }
                     )
                 );

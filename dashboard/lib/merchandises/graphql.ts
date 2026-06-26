@@ -105,7 +105,7 @@ const MERCHANDISES_QUERY = /* GraphQL */ `
 
 const MERCHANDISE_QUERY = /* GraphQL */ `
   query GetMerchandise($id: Int!) {
-    merchandise(Id: $id) {
+    merchandise(id: $id) {
       id
       description
       cargoType

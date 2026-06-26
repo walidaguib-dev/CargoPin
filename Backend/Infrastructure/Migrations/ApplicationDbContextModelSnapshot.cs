@@ -92,12 +92,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("TaxId")
                         .HasColumnType("text");
 
-                    b.Property<int?>("VesselId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("VesselId");
 
                     b.ToTable("Clients");
                 });
@@ -681,13 +676,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Zone");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Client", b =>
-                {
-                    b.HasOne("Domain.Entities.Vessel", null)
-                        .WithMany("Clients")
-                        .HasForeignKey("VesselId");
-                });
-
             modelBuilder.Entity("Domain.Entities.FileUploads", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
@@ -885,11 +873,6 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("refreshTokens")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Entities.Vessel", b =>
-                {
-                    b.Navigation("Clients");
                 });
 
             modelBuilder.Entity("Domain.Entities.Zone", b =>
