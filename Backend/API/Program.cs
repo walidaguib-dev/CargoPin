@@ -41,13 +41,10 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins(
-                    "http://localhost:3000",
-                    "http://192.168.1.11:3000" // your network URL from Next.js logs
-                )
+                .WithOrigins("http://localhost:3000", "https://cargo-pin.vercel.app")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
-                .AllowCredentials(); // ← required for SignalR
+                .AllowCredentials();
         }
     );
 });
