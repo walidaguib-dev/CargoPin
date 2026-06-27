@@ -105,8 +105,11 @@ using (var scope = app.Services.CreateScope())
 
     await db.Database.MigrateAsync(); // applies any pending migrations
 
-    var seeder = new CargoDataSeeder(db);
-    await seeder.SeedAsync();
+    if (app.Environment.IsDevelopment())
+    {
+        var seeder = new CargoDataSeeder(db);
+        await seeder.SeedAsync();
+    }
 }
 
 app.SetupDocumentation();

@@ -83,6 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
+    console.trace("[Auth] logout() called");
     clearTimers();
     clearAuthCookie();
     localStorage.removeItem("access_token");
@@ -117,6 +118,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [logout],
   );
 
+  // Performs the actual POST /tokens/generate call and stores the rotated
+  // tokens. Returns the new pair on success, or null on failure (after
+  // already calling logout()). Declared before scheduleAccessRefresh, which
+  // calls it, and itself does NOT call scheduleAccessRefresh back — callers
+  // reschedule using the returned tokens — so there's no circular dependency
+  // between the two useCallbacks.
+  const tryImmediateRefresh = useCallback(
+    async (
+      refreshToken: string,
+      userId: string,
+    ): Promise<{ accessToken: string; refreshToken: string; refreshExpiry: number } | null> => {
+      console.log("[Auth] tryImmediateRefresh: POST /tokens/generate", { userId });
+
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URI}/tokens/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, refreshTokenString: refreshToken }),
+        });
+
+        console.log("[Auth] tryImmediateRefresh: response status =", res.status);
+
+        if (!res.ok) {
+          console.error("[Auth] tryImmediateRefresh: refresh failed, status", res.status, "— logging out");
+          logout();
+          return null;
+        }
+
+        // Backend's TokenPairDto has PascalCase_With_Underscore property names
+        // (Access_Token/Refresh_Token), but ASP.NET Core's default minimal-API
+        // JSON serializer (JsonSerializerDefaults.Web, no override anywhere in
+        // API/) applies a camelCase naming policy that only lowercases the
+        // first letter — so the actual wire shape is access_Token/refresh_Token.
+        // app/auth/login/page.tsx already reads it this way; this was the bug.
+        const data: { access_Token: string; refresh_Token: string } = await res.json();
+
+        const newRefreshExpiry = Date.now() + REFRESH_TOKEN_LIFETIME_MS;
+
+        setAuthCookie();
+        localStorage.setItem("access_token", data.access_Token);
+        localStorage.setItem("refresh_token", data.refresh_Token);
+        localStorage.setItem("refresh_token_expiry", String(newRefreshExpiry));
+
+        setState((prev) => ({
+          ...prev,
+          accessToken: data.access_Token,
+          userId,
+          isAuthenticated: true,
+          isLoading: false,
+        }));
+
+        console.log("[Auth] tryImmediateRefresh: refresh succeeded");
+
+        return { accessToken: data.access_Token, refreshToken: data.refresh_Token, refreshExpiry: newRefreshExpiry };
+      } catch (err) {
+        console.error("[Auth] tryImmediateRefresh: error", err, "— logging out");
+        logout();
+        return null;
+      }
+    },
+    [logout],
+  );
+
   // Schedules a silent access token refresh 1 minute before it expires.
   // On success the backend rotates the refresh token, so we store both new tokens
   // and reset the 7-day expiry window.
@@ -127,50 +191,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const accessExpiry = getAccessTokenExpiry(accessToken);
       const delay = accessExpiry - Date.now() - 60_000; // 1 min early
 
+      console.log("[Auth] scheduleAccessRefresh: delay until refresh =", delay, "ms");
+
+      const refreshAndReschedule = async () => {
+        console.log("[Auth] scheduleAccessRefresh: attempting refresh");
+        const result = await tryImmediateRefresh(refreshToken, userId);
+        if (!result) return; // tryImmediateRefresh already called logout()
+
+        scheduleAccessRefresh(result.accessToken, result.refreshToken, userId);
+        scheduleRefreshTokenExpiry(result.refreshExpiry);
+      };
+
       if (delay <= 0) {
-        logout();
+        // Token is already at/past the 1-min-early threshold (e.g. clock skew,
+        // or this fires right after a page reload) — refresh now instead of
+        // forcing a logout.
+        console.log("[Auth] scheduleAccessRefresh: delay <= 0, refreshing immediately instead of logging out");
+        void refreshAndReschedule();
         return;
       }
 
-      accessRefreshTimerRef.current = setTimeout(async () => {
+      accessRefreshTimerRef.current = setTimeout(() => {
         // Bail out if the refresh token already expired before we fire
         const storedExpiry = Number(localStorage.getItem("refresh_token_expiry") ?? 0);
         if (storedExpiry && storedExpiry <= Date.now()) {
+          console.log("[Auth] scheduleAccessRefresh: refresh token expired before timer fired — logging out");
           logout();
           return;
         }
 
-        try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URI}/tokens/generate`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ userId, refreshTokenString: refreshToken }),
-            },
-          );
-
-          if (!res.ok) throw new Error("Refresh failed");
-
-          const data: { Access_Token: string; Refresh_Token: string } =
-            await res.json();
-
-          const newRefreshExpiry = Date.now() + REFRESH_TOKEN_LIFETIME_MS;
-
-          localStorage.setItem("access_token", data.Access_Token);
-          localStorage.setItem("refresh_token", data.Refresh_Token);
-          localStorage.setItem("refresh_token_expiry", String(newRefreshExpiry));
-
-          setState((prev) => ({ ...prev, accessToken: data.Access_Token }));
-
-          scheduleAccessRefresh(data.Access_Token, data.Refresh_Token, userId);
-          scheduleRefreshTokenExpiry(newRefreshExpiry);
-        } catch {
-          logout();
-        }
+        console.log("[Auth] scheduleAccessRefresh: timer fired");
+        void refreshAndReschedule();
       }, delay);
     },
-    [logout, scheduleRefreshTokenExpiry],
+    [logout, scheduleRefreshTokenExpiry, tryImmediateRefresh],
   );
 
   const login = useCallback(
@@ -224,6 +278,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     if (!accessToken || !refreshToken) {
+      console.log("[Auth] mount: no stored tokens, nothing to restore");
       clearAuthCookie();
       setState((prev) => ({ ...prev, isLoading: false }));
       return;
@@ -231,6 +286,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Refresh token expired — nothing we can do
     if (refreshTokenExpiry && refreshTokenExpiry <= Date.now()) {
+      console.log("[Auth] mount: refresh token expired — clearing session");
       clear();
       return;
     }
@@ -239,6 +295,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       getUserIdFromToken(accessToken) || localStorage.getItem("user_id");
 
     if (!userId) {
+      console.log("[Auth] mount: could not resolve userId — clearing session");
       clear();
       return;
     }
@@ -246,43 +303,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const accessExpired = getAccessTokenExpiry(accessToken) <= Date.now();
 
     if (accessExpired) {
-      // Access token expired but refresh token is still valid — refresh immediately
-      fetch(`${process.env.NEXT_PUBLIC_API_URI}/tokens/generate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, refreshTokenString: refreshToken }),
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error();
-          return res.json() as Promise<{
-            Access_Token: string;
-            Refresh_Token: string;
-          }>;
-        })
-        .then((data) => {
-          const newRefreshExpiry = Date.now() + REFRESH_TOKEN_LIFETIME_MS;
-          setAuthCookie();
-          localStorage.setItem("access_token", data.Access_Token);
-          localStorage.setItem("refresh_token", data.Refresh_Token);
-          localStorage.setItem(
-            "refresh_token_expiry",
-            String(newRefreshExpiry),
-          );
-          setState({
-            accessToken: data.Access_Token,
-            userId,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-          scheduleAccessRefresh(data.Access_Token, data.Refresh_Token, userId);
-          scheduleRefreshTokenExpiry(newRefreshExpiry);
-        })
-        .catch(clear);
-
+      // Access token expired but refresh token is still valid — refresh
+      // immediately via the same code path the access-refresh timer uses.
+      console.log("[Auth] mount: access token expired, refresh token still valid — refreshing immediately");
+      tryImmediateRefresh(refreshToken, userId).then((result) => {
+        if (!result) return; // tryImmediateRefresh already called logout()
+        scheduleAccessRefresh(result.accessToken, result.refreshToken, userId);
+        scheduleRefreshTokenExpiry(result.refreshExpiry);
+      });
       return;
     }
 
     // Access token still valid — restore session and start timers
+    console.log("[Auth] mount: access token still valid — restoring session and scheduling timers");
     setAuthCookie();
     setState({
       accessToken,
@@ -293,7 +326,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     scheduleAccessRefresh(accessToken, refreshToken, userId);
     if (refreshTokenExpiry) scheduleRefreshTokenExpiry(refreshTokenExpiry);
-  }, [scheduleAccessRefresh, scheduleRefreshTokenExpiry]);
+  }, [scheduleAccessRefresh, scheduleRefreshTokenExpiry, tryImmediateRefresh]);
 
   return (
     <AuthContext.Provider value={{ ...state, login, logout }}>
