@@ -86,6 +86,28 @@ namespace Infrastructure.Repositories
             return true;
         }
 
+        // Deliberately uncached — every tallyman queries a different point/radius,
+        // so there's no shared cache key worth keeping warm, and positions change
+        // frequently enough that a stale "nearby" result would be actively
+        // misleading for someone about to place cargo there.
+        public async Task<List<MerchandiseAreaPosition>> GetNearbyPositionsAsync(
+            Point point,
+            double radiusInDegrees
+        ) =>
+            await _context
+                .MerchandiseAreaPositions.AsNoTracking()
+                .Include(p => p.Shipment)
+                .ThenInclude(s => s.Client)
+                .Include(p => p.Shipment)
+                .ThenInclude(s => s.Merchandise)
+                .Include(p => p.Shipment)
+                .ThenInclude(s => s.Vessel)
+                .Include(p => p.Area)
+                .Include(p => p.Zone)
+                .Where(p => p.IsActive && p.state == PositionState.active)
+                .Where(p => p.Location.IsWithinDistance(point, radiusInDegrees))
+                .ToListAsync();
+
         public async Task<Zone?> FindContainingZoneAsync(Point point) =>
             await _context
                 .Zones.AsNoTracking()

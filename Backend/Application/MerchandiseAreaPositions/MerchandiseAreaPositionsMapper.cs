@@ -30,5 +30,21 @@ namespace Application.MerchandiseAreaPositions
         public static UpdateMerchandiseAreaPositionRequest MapToRequest(
             this UpdateMerchandiseAreaPositionDto dto
         ) => new() { Notes = dto.Notes, State = dto.State };
+
+        public static NearbyPositionDto MapToNearbyDto(this MerchandiseAreaPosition position) =>
+            new()
+            {
+                Id = position.Id,
+                ClientName = position.Shipment.Client.Name,
+                MerchandiseDescription = position.Shipment.Merchandise.Description,
+                VesselName = position.Shipment.Vessel.Name,
+                Latitude = position.Location.Y,
+                Longitude = position.Location.X,
+                PlacedAt = position.PlacedAt,
+                Notes = position.Notes,
+                IsEmergencyPlacement = position.IsEmergencyPlacement,
+                AreaName = position.Area?.Name,
+                ZoneName = position.Zone?.Name,
+            };
     }
 }

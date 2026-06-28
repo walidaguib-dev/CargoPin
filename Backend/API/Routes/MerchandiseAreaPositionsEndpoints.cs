@@ -40,6 +40,26 @@ namespace API.Routes
             );
 
             group
+                .MapGet(
+                    "nearby",
+                    async (
+                        ISender sender,
+                        double latitude,
+                        double longitude,
+                        double radius = 50,
+                        CancellationToken ct = default
+                    ) =>
+                    {
+                        var query = new GetNearbyPositionsQuery(latitude, longitude, radius);
+                        var result = await sender.Send(query, ct);
+                        return Results.Ok(result);
+                    }
+                )
+                .RequireAuthorization()
+                .WithName("GetNearbyPositions")
+                .WithSummary("Get active positions within radius meters of a GPS point");
+
+            group
                 .MapDelete(
                     "delete/{Id:int}",
                     async (int Id, ISender sender) =>

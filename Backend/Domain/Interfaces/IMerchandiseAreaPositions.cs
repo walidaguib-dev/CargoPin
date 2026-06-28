@@ -15,5 +15,6 @@ namespace Domain.Interfaces
         Task<Zone?> FindContainingZoneAsync(Point point);
         Task<Area?> FindContainingAreaAsync(Point point);
         Task<GeoJsonFeatureCollection> GetActivePositionsGeoJsonAsync();
+        Task<List<MerchandiseAreaPosition>> GetNearbyPositionsAsync(Point point, double radiusInDegrees);
     }
 }
