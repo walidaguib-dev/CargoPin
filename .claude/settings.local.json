@@ -98,7 +98,16 @@
       "Bash(strings ~/.nuget/packages/hotchocolate.data/15.1.14/lib/net9.0/HotChocolate.Data.dll | grep -iE \"some|none|\\\\ball\\\\b|\\\\bany\\\\b\" | sort -u | head -60)",
       "Bash(strings ~/.nuget/packages/hotchocolate.data/15.1.14/lib/net9.0/HotChocolate.Data.dll | grep -i \"OperationHandler\" | grep -i \"List\")",
       "Bash(grep -iE \"^\\(any|all|some|none\\)$\")",
-      "Bash(strings ~/.nuget/packages/hotchocolate.data/15.1.14/lib/net9.0/HotChocolate.Data.dll | grep -iE \"ListFilter|AllOperation|AnyOperation\" )"
+      "Bash(strings ~/.nuget/packages/hotchocolate.data/15.1.14/lib/net9.0/HotChocolate.Data.dll | grep -iE \"ListFilter|AllOperation|AnyOperation\" )",
+      "Bash(rm -rf /home/walidaguib7/net/CargoPin/Mobile/.git && echo \"done\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(gh auth *)",
+      "Bash(git remote *)"
+    ],
+    "additionalDirectories": [
+      "/home/walidaguib7/net/CargoPin/Mobile/.git"
     ]
   }
 }
