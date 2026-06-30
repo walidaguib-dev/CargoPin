@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { XCircle } from "lucide-react";
 
@@ -63,6 +64,14 @@ export function ShipmentFormFields({
     formState: { errors },
   } = useFormContext<ShipmentFormValues>();
 
+  const [clientLabel, setClientLabel] = useState<string | null>(initialClientLabel ?? null);
+  const [vesselLabel, setVesselLabel] = useState<string | null>(initialVesselLabel ?? null);
+  const [merchandiseLabel, setMerchandiseLabel] = useState<string | null>(initialMerchandiseLabel ?? null);
+
+  useEffect(() => { setClientLabel(initialClientLabel ?? null); }, [initialClientLabel]);
+  useEffect(() => { setVesselLabel(initialVesselLabel ?? null); }, [initialVesselLabel]);
+  useEffect(() => { setMerchandiseLabel(initialMerchandiseLabel ?? null); }, [initialMerchandiseLabel]);
+
   return (
     <div className="flex flex-col gap-4">
       <div>
@@ -75,8 +84,11 @@ export function ShipmentFormFields({
           render={({ field }) => (
             <ClientSelect
               id="clientId"
-              selectedLabel={field.value > 0 ? initialClientLabel : null}
-              onSelect={(option) => field.onChange(option?.id ?? 0)}
+              selectedLabel={field.value > 0 ? clientLabel : null}
+              onSelect={(option) => {
+                field.onChange(option?.id ?? 0);
+                setClientLabel(option?.label ?? null);
+              }}
               hasError={Boolean(errors.clientId)}
             />
           )}
@@ -94,8 +106,11 @@ export function ShipmentFormFields({
           render={({ field }) => (
             <VesselSelect
               id="vesselId"
-              selectedLabel={field.value > 0 ? initialVesselLabel : null}
-              onSelect={(option) => field.onChange(option?.id ?? 0)}
+              selectedLabel={field.value > 0 ? vesselLabel : null}
+              onSelect={(option) => {
+                field.onChange(option?.id ?? 0);
+                setVesselLabel(option?.label ?? null);
+              }}
               hasError={Boolean(errors.vesselId)}
             />
           )}
@@ -113,8 +128,11 @@ export function ShipmentFormFields({
           render={({ field }) => (
             <MerchandiseSelect
               id="merchandiseId"
-              selectedLabel={field.value > 0 ? initialMerchandiseLabel : null}
-              onSelect={(option) => field.onChange(option?.id ?? 0)}
+              selectedLabel={field.value > 0 ? merchandiseLabel : null}
+              onSelect={(option) => {
+                field.onChange(option?.id ?? 0);
+                setMerchandiseLabel(option?.label ?? null);
+              }}
               hasError={Boolean(errors.merchandiseId)}
             />
           )}
