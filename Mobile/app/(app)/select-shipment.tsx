@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,26 +6,26 @@ import {
   RefreshControl,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 import { getGraphQLClient } from "@/lib/graphql";
 import { Shipment } from "@/types";
+import ShipmentFilterModal, {
+  buildShipmentWhere,
+  EMPTY_FILTERS,
+  type ShipmentFilters,
+} from "@/components/ShipmentFilterModal";
 
-const SEARCH_QUERY = `
-  query SearchShipments($search: String!) {
-    shipments(
-      where: {
-        or: [
-          { client: { name: { contains: $search } } }
-          { blNumbers: { some: { eq: $search } } }
-        ]
-      }
-      first: 20
-    ) {
+// Single parameterised query — replaces the old search-only query.
+// $where is optional; omit it when there are no active conditions.
+const FILTERED_QUERY = `
+  query SearchShipments($where: ShipmentFilterInput, $first: Int!) {
+    shipments(where: $where, first: $first) {
       nodes {
         id
         blNumbers
@@ -43,9 +43,14 @@ interface SearchResult {
   shipments: { nodes: Shipment[] };
 }
 
-async function searchShipments(search: string): Promise<Shipment[]> {
+async function queryShipments(
+  filters: ShipmentFilters,
+): Promise<Shipment[]> {
+  const where = buildShipmentWhere("", filters);
   const client = await getGraphQLClient();
-  const data = await client.request<SearchResult>(SEARCH_QUERY, { search });
+  const variables: Record<string, unknown> = { first: 20 };
+  if (Object.keys(where).length > 0) variables.where = where;
+  const data = await client.request<SearchResult>(FILTERED_QUERY, variables);
   return data.shipments.nodes;
 }
 
@@ -132,70 +137,88 @@ function ShipmentCard({
 }
 
 export default function SelectShipmentScreen() {
-  const [inputText, setInputText] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<ShipmentFilters>(EMPTY_FILTERS);
 
-  const handleChange = useCallback((text: string) => {
-    setInputText(text);
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    debounceTimer.current = setTimeout(() => {
-      setDebouncedSearch(text.trim());
-    }, 300);
+  const handleApplyFilters = useCallback((filters: ShipmentFilters) => {
+    setActiveFilters(filters);
   }, []);
+
+  const activeFilterCount = Object.values(activeFilters).filter((v) => v !== "").length;
+  const hasActiveFilters = activeFilterCount > 0;
+
+  const navigation = useNavigation();
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          onPress={() => setFilterModalVisible(true)}
+          style={{ marginRight: 16, position: "relative" }}
+        >
+          <Ionicons
+            name={activeFilterCount > 0 ? "options" : "options-outline"}
+            size={22}
+            color={activeFilterCount > 0 ? "#0EA5E9" : "#94A3B8"}
+          />
+          {activeFilterCount > 0 && (
+            <View
+              style={{
+                position: "absolute",
+                top: -4,
+                right: -4,
+                width: 16,
+                height: 16,
+                borderRadius: 8,
+                backgroundColor: "#0EA5E9",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "white", fontSize: 10, fontWeight: "700" }}>
+                {activeFilterCount}
+              </Text>
+            </View>
+          )}
+        </Pressable>
+      ),
+    });
+  }, [activeFilterCount, navigation]);
 
   const { data, isLoading, isError, isRefetching, refetch } = useQuery({
-    queryKey: ["shipments-search", debouncedSearch],
-    queryFn: () => searchShipments(debouncedSearch),
-    enabled: debouncedSearch.length >= 2,
+    queryKey: ["shipments-select", activeFilters],
+    queryFn: () => queryShipments(activeFilters),
   });
 
-  const handleCardPress = useCallback((shipment: Shipment) => {
-    router.push({
-      pathname: "/(app)/assign",
-      params: {
-        shipmentId: String(shipment.id),
-        clientName: shipment.client.name,
-        merchandiseDescription: shipment.merchandise.description,
-        vesselName: shipment.vessel.name,
-        blNumbers: JSON.stringify(shipment.blNumbers),
-      },
-    });
-  }, []);
+  const handleCardPress = useCallback(
+    (shipment: Shipment) => {
+      router.push({
+        pathname: "/(app)/assign",
+        params: {
+          shipmentId: String(shipment.id),
+          clientName: shipment.client.name,
+          merchandiseDescription: shipment.merchandise.description,
+          vesselName: shipment.vessel.name,
+          blNumbers: JSON.stringify(shipment.blNumbers),
+        },
+      });
+    },
+    [],
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: Shipment }) => (
       <ShipmentCard shipment={item} onPress={() => handleCardPress(item)} />
     ),
-    [handleCardPress]
+    [handleCardPress],
   );
 
   const keyExtractor = useCallback((item: Shipment) => String(item.id), []);
 
-  const showEmpty =
-    !isLoading && !isError && debouncedSearch.length >= 2 && (!data || data.length === 0);
-  const showPrompt = debouncedSearch.length < 2;
+  const showEmpty = !isLoading && !isError && (!data || data.length === 0);
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputSection}>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            placeholder="Client name or B/L number..."
-            placeholderTextColor="#475569"
-            value={inputText}
-            onChangeText={handleChange}
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType="search"
-            clearButtonMode="while-editing"
-            autoFocus
-          />
-        </View>
-      </View>
-
-      {isLoading && debouncedSearch.length >= 2 ? (
+      {isLoading ? (
         <View style={styles.center}>
           <ActivityIndicator color="#3B82F6" size="large" />
         </View>
@@ -206,14 +229,10 @@ export default function SelectShipmentScreen() {
             <Text style={styles.retryText}>Retry</Text>
           </Pressable>
         </View>
-      ) : showPrompt ? (
-        <View style={styles.center}>
-          <Text style={styles.promptText}>Enter at least 2 characters to search</Text>
-        </View>
       ) : showEmpty ? (
         <View style={styles.center}>
           <Text style={styles.emptyText}>No shipments found</Text>
-          <Text style={styles.emptySubText}>Try a different client name or B/L number</Text>
+          <Text style={styles.emptySubText}>Try adjusting your filters</Text>
         </View>
       ) : (
         <FlatList
@@ -232,6 +251,13 @@ export default function SelectShipmentScreen() {
           }
         />
       )}
+
+      <ShipmentFilterModal
+        visible={filterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+        onApply={handleApplyFilters}
+        currentFilters={activeFilters}
+      />
     </View>
   );
 }
@@ -240,26 +266,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#0F172A",
-  },
-  inputSection: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 12,
-    backgroundColor: "#0F172A",
-    borderBottomWidth: 1,
-    borderBottomColor: "#1E293B",
-  },
-  inputWrapper: {
-    backgroundColor: "#1E293B",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#334155",
-  },
-  input: {
-    color: "#F1F5F9",
-    fontSize: 15,
-    paddingHorizontal: 14,
-    paddingVertical: 11,
   },
   list: {
     padding: 16,
@@ -324,11 +330,6 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 11,
     fontWeight: "600",
-  },
-  promptText: {
-    color: "#475569",
-    fontSize: 14,
-    textAlign: "center",
   },
   emptyText: {
     color: "#94A3B8",

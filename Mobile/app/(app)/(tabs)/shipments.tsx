@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -8,13 +8,18 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { getGraphQLClient } from "@/lib/graphql";
+import ShipmentFilterModal, {
+  buildShipmentWhere,
+  EMPTY_FILTERS,
+  type ShipmentFilters,
+} from "@/components/ShipmentFilterModal";
 
 // Extended types — include contact/IMO fields fetched only in this screen
 interface ShipmentClient {
@@ -59,25 +64,11 @@ const SHIPMENTS_FIELDS = `
   merchandise { id description cargoType }
 `;
 
-const BROWSE_QUERY = `
-  query BrowseShipments {
-    shipments(first: 20, order: [{ arrivalDate: DESC }]) {
-      nodes { ${SHIPMENTS_FIELDS} }
-    }
-  }
-`;
-
-const SEARCH_QUERY = `
-  query SearchShipments($search: String!) {
-    shipments(
-      where: {
-        or: [
-          { client: { name: { contains: $search } } }
-          { blNumbers: { some: { eq: $search } } }
-        ]
-      }
-      first: 20
-    ) {
+// Single parameterised query replaces the old BROWSE_QUERY + SEARCH_QUERY pair.
+// $where is optional — omitting it returns all shipments (browse mode).
+const FILTERED_QUERY = `
+  query GetShipments($where: ShipmentFilterInput, $first: Int!) {
+    shipments(where: $where, first: $first, order: [{ arrivalDate: DESC }]) {
       nodes { ${SHIPMENTS_FIELDS} }
     }
   }
@@ -87,24 +78,18 @@ interface QueryResult {
   shipments: { nodes: ShipmentDetail[] };
 }
 
-async function browseShipments(): Promise<ShipmentDetail[]> {
+async function queryShipments(
+  filters: ShipmentFilters,
+): Promise<ShipmentDetail[]> {
   try {
+    const where = buildShipmentWhere("", filters);
     const client = await getGraphQLClient();
-    const data = await client.request<QueryResult>(BROWSE_QUERY);
+    const variables: Record<string, unknown> = { first: 20 };
+    if (Object.keys(where).length > 0) variables.where = where;
+    const data = await client.request<QueryResult>(FILTERED_QUERY, variables);
     return data.shipments.nodes;
   } catch (err) {
-    console.error("[Shipments] browseShipments error:", JSON.stringify(err, null, 2));
-    throw err;
-  }
-}
-
-async function searchShipments(search: string): Promise<ShipmentDetail[]> {
-  try {
-    const client = await getGraphQLClient();
-    const data = await client.request<QueryResult>(SEARCH_QUERY, { search });
-    return data.shipments.nodes;
-  } catch (err) {
-    console.error("[Shipments] searchShipments error:", JSON.stringify(err, null, 2));
+    console.error("[Shipments] queryShipments error:", JSON.stringify(err, null, 2));
     throw err;
   }
 }
@@ -218,14 +203,11 @@ function ShipmentDetailModal({
       transparent
       onRequestClose={onClose}
     >
-      {/* Tap backdrop to close */}
       <Pressable style={styles.backdrop} onPress={onClose} />
 
       <View style={styles.sheet}>
-        {/* Handle bar */}
         <View style={styles.sheetHandle} />
 
-        {/* Header */}
         <View style={styles.sheetHeader}>
           <Text style={styles.sheetTitle} numberOfLines={1}>
             {shipment.client.name}
@@ -240,7 +222,6 @@ function ShipmentDetailModal({
           contentContainerStyle={styles.sheetContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Status */}
           <View style={styles.sheetSection}>
             <Text style={styles.sheetSectionLabel}>STATUS</Text>
             <View style={styles.statusRow}>
@@ -248,20 +229,16 @@ function ShipmentDetailModal({
             </View>
           </View>
 
-          {/* Cargo */}
           <View style={styles.sheetSection}>
             <Text style={styles.sheetSectionLabel}>CARGO</Text>
             <View style={styles.sheetCard}>
               <DetailRow label="Description" value={shipment.merchandise.description} />
               <DetailRow label="Type" value={shipment.merchandise.cargoType} />
               <DetailRow label="Arrival" value={arrivalDate} />
-              {shipment.note ? (
-                <DetailRow label="Note" value={shipment.note} />
-              ) : null}
+              {shipment.note ? <DetailRow label="Note" value={shipment.note} /> : null}
             </View>
           </View>
 
-          {/* B/L Numbers */}
           {shipment.blNumbers.length > 0 && (
             <View style={styles.sheetSection}>
               <Text style={styles.sheetSectionLabel}>BILL OF LADING</Text>
@@ -275,7 +252,6 @@ function ShipmentDetailModal({
             </View>
           )}
 
-          {/* Vessel */}
           <View style={styles.sheetSection}>
             <Text style={styles.sheetSectionLabel}>VESSEL</Text>
             <View style={styles.sheetCard}>
@@ -284,7 +260,6 @@ function ShipmentDetailModal({
             </View>
           </View>
 
-          {/* Client */}
           <View style={styles.sheetSection}>
             <Text style={styles.sheetSectionLabel}>CLIENT</Text>
             <View style={styles.sheetCard}>
@@ -301,31 +276,64 @@ function ShipmentDetailModal({
 }
 
 export default function ShipmentsScreen() {
-  const [inputText, setInputText] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedShipment, setSelectedShipment] = useState<ShipmentDetail | null>(null);
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<ShipmentFilters>(EMPTY_FILTERS);
 
-  const handleChange = useCallback((text: string) => {
-    setInputText(text);
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    debounceTimer.current = setTimeout(() => {
-      setDebouncedSearch(text.trim());
-    }, 300);
+  const handleApplyFilters = useCallback((filters: ShipmentFilters) => {
+    setActiveFilters(filters);
   }, []);
 
-  const isSearching = debouncedSearch.length >= 2;
+  const activeFilterCount = Object.values(activeFilters).filter((v) => v !== "").length;
+  const hasActiveFilters = activeFilterCount > 0;
+
+  const navigation = useNavigation();
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          onPress={() => setFilterModalVisible(true)}
+          style={{ marginRight: 16, position: "relative" }}
+        >
+          <Ionicons
+            name={activeFilterCount > 0 ? "options" : "options-outline"}
+            size={22}
+            color={activeFilterCount > 0 ? "#0EA5E9" : "#94A3B8"}
+          />
+          {activeFilterCount > 0 && (
+            <View
+              style={{
+                position: "absolute",
+                top: -4,
+                right: -4,
+                width: 16,
+                height: 16,
+                borderRadius: 8,
+                backgroundColor: "#0EA5E9",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "white", fontSize: 10, fontWeight: "700" }}>
+                {activeFilterCount}
+              </Text>
+            </View>
+          )}
+        </Pressable>
+      ),
+    });
+  }, [activeFilterCount, navigation]);
 
   const { data, isLoading, isError, error, isRefetching, refetch } = useQuery({
-    queryKey: isSearching ? ["shipments-browse-search", debouncedSearch] : ["shipments-browse"],
-    queryFn: () => isSearching ? searchShipments(debouncedSearch) : browseShipments(),
+    queryKey: ["shipments", activeFilters],
+    queryFn: () => queryShipments(activeFilters),
   });
 
   const renderItem = useCallback(
     ({ item }: { item: ShipmentDetail }) => (
       <ShipmentCard shipment={item} onPress={() => setSelectedShipment(item)} />
     ),
-    []
+    [],
   );
 
   const keyExtractor = useCallback((item: ShipmentDetail) => String(item.id), []);
@@ -334,23 +342,6 @@ export default function ShipmentsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputSection}>
-        <View style={styles.inputWrapper}>
-          <Ionicons name="search-outline" size={16} color="#475569" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Filter by client or B/L…"
-            placeholderTextColor="#475569"
-            value={inputText}
-            onChangeText={handleChange}
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType="search"
-            clearButtonMode="while-editing"
-          />
-        </View>
-      </View>
-
       {isLoading ? (
         <View style={styles.center}>
           <ActivityIndicator color="#0EA5E9" size="large" />
@@ -368,10 +359,10 @@ export default function ShipmentsScreen() {
         <View style={styles.center}>
           <Ionicons name="cube-outline" size={48} color="#334155" />
           <Text style={styles.emptyTitle}>
-            {isSearching ? "No shipments found" : "No shipments yet"}
+            {hasActiveFilters ? "No shipments found" : "No shipments yet"}
           </Text>
-          {isSearching && (
-            <Text style={styles.emptyHint}>Try a different client name or B/L number</Text>
+          {hasActiveFilters && (
+            <Text style={styles.emptyHint}>Try adjusting your filters</Text>
           )}
         </View>
       ) : (
@@ -396,6 +387,13 @@ export default function ShipmentsScreen() {
         shipment={selectedShipment}
         onClose={() => setSelectedShipment(null)}
       />
+
+      <ShipmentFilterModal
+        visible={filterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+        onApply={handleApplyFilters}
+        currentFilters={activeFilters}
+      />
     </View>
   );
 }
@@ -404,31 +402,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#0F172A",
-  },
-  inputSection: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#1E293B",
-  },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#1E293B",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#334155",
-    paddingHorizontal: 12,
-  },
-  inputIcon: {
-    marginRight: 8,
-  },
-  input: {
-    flex: 1,
-    color: "#F1F5F9",
-    fontSize: 15,
-    paddingVertical: 11,
   },
   list: {
     padding: 16,
@@ -520,7 +493,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 14,
   },
-  // Modal / bottom sheet
+  // Detail modal / bottom sheet
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",

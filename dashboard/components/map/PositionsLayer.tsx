@@ -1,18 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import { CircleMarker, Popup } from "react-leaflet";
+import { toast } from "sonner";
 
 import type { GeoJsonFeatureCollection, PositionGeoJsonProperties } from "@/lib/map/geojson-types";
+import { useAuth } from "@/context/AuthContext";
+import { deletePosition } from "@/lib/map/api";
 import { pointToLatLng } from "./geo";
 
 interface PositionsLayerProps {
   data: GeoJsonFeatureCollection<PositionGeoJsonProperties> | null;
+  onDeleted: (id: number) => void;
 }
 
-// Has Area -> blue, Zone only -> yellow, Emergency -> red. These three are mutually
-// exclusive by construction (CreateMerchandiseAreaPositionHandler only ever sets
-// IsEmergencyPlacement when both area and zone are null), so a simple priority
-// check is enough — no case where two of these could apply to the same position.
 function colorFor(props: PositionGeoJsonProperties): string {
   if (props.isEmergencyPlacement) return "#DC2626";
   if (props.areaName) return "#2563EB";
@@ -32,13 +33,39 @@ function formatPlacedAt(iso: string): string {
   });
 }
 
-export function PositionsLayer({ data }: PositionsLayerProps) {
+export function PositionsLayer({ data, onDeleted }: PositionsLayerProps) {
+  const { accessToken } = useAuth();
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  async function handleDelete(id: number) {
+    if (!confirm("Delete this position? This cannot be undone.")) return;
+    setDeletingId(id);
+    try {
+      await deletePosition(id, accessToken);
+      onDeleted(id);
+      toast.success("Position deleted successfully");
+    } catch {
+      toast.error("Failed to delete position");
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   if (!data) return null;
 
   return (
     <>
       {data.features.map((feature) => {
         const color = colorFor(feature.properties);
+        const coords =
+          feature.geometry.type === "Point"
+            ? feature.geometry.coordinates
+            : ([0, 0] as [number, number]);
+        const lat = coords[1];
+        const lng = coords[0];
+        const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+        const isDeleting = deletingId === feature.properties.id;
+
         return (
           <CircleMarker
             key={feature.properties.id}
@@ -70,6 +97,43 @@ export function PositionsLayer({ data }: PositionsLayerProps) {
                 {feature.properties.notes ? (
                   <p className="mt-1 text-[#64748B]">Notes: {feature.properties.notes}</p>
                 ) : null}
+
+                <a
+                  href={googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "block",
+                    marginTop: "8px",
+                    color: "#0EA5E9",
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    fontWeight: "600",
+                  }}
+                >
+                  📍 Open in Google Maps
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => void handleDelete(feature.properties.id)}
+                  disabled={isDeleting}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    marginTop: "8px",
+                    padding: "6px 12px",
+                    backgroundColor: isDeleting ? "#FCA5A5" : "#EF4444",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: isDeleting ? "not-allowed" : "pointer",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                  }}
+                >
+                  {isDeleting ? "Deleting…" : "Delete Position"}
+                </button>
               </div>
             </Popup>
           </CircleMarker>

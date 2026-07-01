@@ -229,7 +229,16 @@ export function MapView() {
 
           <ZonesLayer data={zones} onEdit={setEditingZoneId} onDelete={(id, name) => setDeletingZone({ id, name })} />
           <AreasLayer data={areas} onEdit={setEditingAreaId} onDelete={(id, name) => setDeletingArea({ id, name })} />
-          <PositionsLayer data={positions} />
+          <PositionsLayer
+            data={positions}
+            onDeleted={(id) =>
+              setPositions((prev) =>
+                prev
+                  ? { ...prev, features: prev.features.filter((f) => f.properties.id !== id) }
+                  : null,
+              )
+            }
+          />
         </MapContainer>
       </div>
 

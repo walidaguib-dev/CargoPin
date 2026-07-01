@@ -168,6 +168,14 @@ export async function deleteArea(id: number, accessToken: string | null): Promis
   if (!res.ok) await throwOnError(res);
 }
 
+export async function deletePosition(id: number, accessToken: string | null): Promise<void> {
+  const res = await fetch(`${API_BASE}/positions/delete/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(accessToken),
+  });
+  if (!res.ok) await throwOnError(res);
+}
+
 interface GraphQLResponse<T> {
   data?: T;
   errors?: { message: string }[];

@@ -5,7 +5,6 @@ import { Ionicons } from "@expo/vector-icons";
 import FloatingActionButton from "@/components/FloatingActionButton";
 
 export default function TabsLayout() {
-  console.log("hello")
   return (
     <View style={styles.root}>
       <Tabs
