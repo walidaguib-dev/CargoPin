@@ -39,8 +39,13 @@ namespace Infrastructure.Repositories
         {
             return await _context
                 .MerchandiseAreaPositions.Include(x => x.Area)
+                .Include(x => x.Zone)
                 .Include(x => x.Shipment)
-                    .ThenInclude(x => x.Client)
+                    .ThenInclude(s => s.Client)
+                .Include(x => x.Shipment)
+                    .ThenInclude(s => s.Merchandise)
+                .Include(x => x.Shipment)
+                    .ThenInclude(s => s.Vessel)
                 .Include(x => x.Tallyman)
                 .Include(x => x.FileUploads)
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -50,9 +55,16 @@ namespace Infrastructure.Repositories
         {
             var result = await _context
                 .MerchandiseAreaPositions.Include(x => x.Area)
+                .Include(x => x.Zone)
                 .Include(x => x.Shipment)
+                    .ThenInclude(s => s.Client)
+                .Include(x => x.Shipment)
+                    .ThenInclude(s => s.Merchandise)
+                .Include(x => x.Shipment)
+                    .ThenInclude(s => s.Vessel)
                 .Include(x => x.Tallyman)
                 .Include(x => x.FileUploads)
+                .AsNoTracking()
                 .ToListAsync();
             return result.AsQueryable();
         }
