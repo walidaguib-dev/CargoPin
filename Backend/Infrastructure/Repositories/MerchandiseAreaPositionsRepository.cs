@@ -40,6 +40,7 @@ namespace Infrastructure.Repositories
             return await _context
                 .MerchandiseAreaPositions.Include(x => x.Area)
                 .Include(x => x.Shipment)
+                    .ThenInclude(x => x.Client)
                 .Include(x => x.Tallyman)
                 .Include(x => x.FileUploads)
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -97,11 +98,11 @@ namespace Infrastructure.Repositories
             await _context
                 .MerchandiseAreaPositions.AsNoTracking()
                 .Include(p => p.Shipment)
-                .ThenInclude(s => s.Client)
+                    .ThenInclude(s => s.Client)
                 .Include(p => p.Shipment)
-                .ThenInclude(s => s.Merchandise)
+                    .ThenInclude(s => s.Merchandise)
                 .Include(p => p.Shipment)
-                .ThenInclude(s => s.Vessel)
+                    .ThenInclude(s => s.Vessel)
                 .Include(p => p.Area)
                 .Include(p => p.Zone)
                 .Where(p => p.IsActive && p.state == PositionState.active)
@@ -133,11 +134,11 @@ namespace Infrastructure.Repositories
             var positions = await _context
                 .MerchandiseAreaPositions.AsNoTracking()
                 .Include(p => p.Shipment)
-                .ThenInclude(s => s.Client)
+                    .ThenInclude(s => s.Client)
                 .Include(p => p.Shipment)
-                .ThenInclude(s => s.Merchandise)
+                    .ThenInclude(s => s.Merchandise)
                 .Include(p => p.Shipment)
-                .ThenInclude(s => s.Vessel)
+                    .ThenInclude(s => s.Vessel)
                 .Include(p => p.Area)
                 .Include(p => p.Zone)
                 .Where(p => p.IsActive)

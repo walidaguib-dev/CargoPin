@@ -32,53 +32,100 @@ interface CreatePositionResult {
   isEmergencyPlacement: boolean;
 }
 
-type LocationState =
-  | { status: "loading" }
-  | { status: "denied" }
-  | { status: "ready"; latitude: number; longitude: number };
-
 type SubmitState =
   | { status: "idle" }
   | { status: "submitting" }
   | { status: "success"; result: CreatePositionResult }
   | { status: "error"; message: string };
 
+function accuracyColor(acc: number): string {
+  if (acc <= 30) return "#10B981";
+  if (acc <= 100) return "#F59E0B";
+  return "#F87171";
+}
+
 export default function AssignScreen() {
   const params = useLocalSearchParams<AssignParams>();
   const blNumbers: string[] = params.blNumbers ? JSON.parse(params.blNumbers) : [];
 
-  const [locationState, setLocationState] = useState<LocationState>({ status: "loading" });
+  const [isCapturing, setIsCapturing] = useState(true);
+  const [gpsStatus, setGpsStatus] = useState<string | null>(null);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [accuracy, setAccuracy] = useState<number | null>(null);
+  const [permissionDenied, setPermissionDenied] = useState(false);
   const [notes, setNotes] = useState("");
   const [submitState, setSubmitState] = useState<SubmitState>({ status: "idle" });
 
-  const acquireLocation = useCallback(async () => {
-    setLocationState({ status: "loading" });
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setLocationState({ status: "denied" });
-        return;
-      }
-      const loc = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-      setLocationState({
-        status: "ready",
-        latitude: loc.coords.latitude,
-        longitude: loc.coords.longitude,
-      });
-    } catch {
-      Alert.alert("Location Error", "Could not get your current location. Please try again.");
-      setLocationState({ status: "denied" });
+  const captureLocation = useCallback(async () => {
+    setIsCapturing(true);
+    setPermissionDenied(false);
+    setGpsStatus("Acquiring GPS signal...");
+
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission Required", "Location access needed");
+      setPermissionDenied(true);
+      setIsCapturing(false);
+      return;
     }
+
+    let bestLocation: Location.LocationObject | null = null;
+    let subscription: Location.LocationSubscription | null = null;
+
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        subscription?.remove();
+        if (bestLocation) {
+          resolve();
+        } else {
+          reject(new Error("GPS timeout"));
+        }
+      }, 20000);
+
+      Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.BestForNavigation,
+          timeInterval: 1000,
+          distanceInterval: 0,
+        },
+        (location) => {
+          const acc = location.coords.accuracy ?? 999;
+          setGpsStatus(`Accuracy: ±${acc.toFixed(0)}m`);
+          if (acc <= 30) {
+            bestLocation = location;
+            clearTimeout(timeout);
+            subscription?.remove();
+            resolve();
+          } else if (!bestLocation || acc < (bestLocation.coords.accuracy ?? 999)) {
+            bestLocation = location;
+          }
+        }
+      ).then((sub) => {
+        subscription = sub;
+      });
+    }).catch(() => {
+      // Use best location we have even if accuracy isn't ideal
+    });
+
+    if (bestLocation) {
+      setLatitude(bestLocation.coords.latitude);
+      setLongitude(bestLocation.coords.longitude);
+      setAccuracy(bestLocation.coords.accuracy ?? null);
+      setGpsStatus(`±${(bestLocation.coords.accuracy ?? 0).toFixed(0)}m accuracy`);
+    } else {
+      Alert.alert("GPS Error", "Could not get location. Go outside and try again.");
+    }
+
+    setIsCapturing(false);
   }, []);
 
   useEffect(() => {
-    void acquireLocation();
-  }, [acquireLocation]);
+    void captureLocation();
+  }, [captureLocation]);
 
   const handleSubmit = useCallback(async () => {
-    if (locationState.status !== "ready") return;
+    if (latitude === null || longitude === null) return;
 
     setSubmitState({ status: "submitting" });
     try {
@@ -86,8 +133,8 @@ export default function AssignScreen() {
         method: "POST",
         body: JSON.stringify({
           shipmentId: Number(params.shipmentId),
-          latitude: locationState.latitude,
-          longitude: locationState.longitude,
+          latitude,
+          longitude,
           notes: notes.trim() || null,
         }),
       });
@@ -96,7 +143,7 @@ export default function AssignScreen() {
       const message = err instanceof Error ? err.message : "Failed to assign position";
       setSubmitState({ status: "error", message });
     }
-  }, [locationState, params.shipmentId, notes]);
+  }, [latitude, longitude, params.shipmentId, notes]);
 
   const handleDone = useCallback(() => {
     router.dismissAll();
@@ -165,30 +212,42 @@ export default function AssignScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>YOUR LOCATION</Text>
         <View style={styles.card}>
-          {locationState.status === "loading" ? (
+          {isCapturing ? (
             <View style={styles.locationLoading}>
               <ActivityIndicator color="#0EA5E9" size="small" />
-              <Text style={styles.locationLoadingText}>Acquiring GPS…</Text>
+              <Text style={styles.locationLoadingText}>
+                {gpsStatus ?? "Acquiring GPS signal..."}
+              </Text>
             </View>
-          ) : locationState.status === "denied" ? (
+          ) : permissionDenied ? (
             <View style={styles.locationDenied}>
               <Ionicons name="location-outline" size={20} color="#F87171" />
               <Text style={styles.locationDeniedText}>Location access denied</Text>
-              <Pressable style={styles.retryButton} onPress={acquireLocation}>
+              <Pressable style={styles.retryButton} onPress={captureLocation}>
                 <Text style={styles.retryText}>Retry</Text>
               </Pressable>
             </View>
-          ) : (
+          ) : latitude !== null && longitude !== null ? (
             <View style={styles.locationReady}>
               <Ionicons name="location" size={18} color="#10B981" />
               <View style={styles.locationCoords}>
                 <Text style={styles.coordText}>
-                  {locationState.latitude.toFixed(6)}, {locationState.longitude.toFixed(6)}
+                  {latitude.toFixed(6)}, {longitude.toFixed(6)}
                 </Text>
+                {gpsStatus !== null && accuracy !== null && (
+                  <Text style={[styles.accuracyText, { color: accuracyColor(accuracy) }]}>
+                    {gpsStatus}
+                  </Text>
+                )}
               </View>
-              <Pressable onPress={acquireLocation}>
+              <Pressable onPress={captureLocation}>
                 <Ionicons name="refresh" size={18} color="#64748B" />
               </Pressable>
+            </View>
+          ) : (
+            <View style={styles.locationLoading}>
+              <ActivityIndicator color="#0EA5E9" size="small" />
+              <Text style={styles.locationLoadingText}>Acquiring GPS signal...</Text>
             </View>
           )}
         </View>
@@ -222,12 +281,12 @@ export default function AssignScreen() {
       <Pressable
         style={({ pressed }) => [
           styles.submitButton,
-          (locationState.status !== "ready" || submitState.status === "submitting") &&
+          (isCapturing || latitude === null || submitState.status === "submitting") &&
             styles.submitButtonDisabled,
           pressed && styles.submitButtonPressed,
         ]}
         onPress={handleSubmit}
-        disabled={locationState.status !== "ready" || submitState.status === "submitting"}
+        disabled={isCapturing || latitude === null || submitState.status === "submitting"}
       >
         {submitState.status === "submitting" ? (
           <ActivityIndicator color="#FFFFFF" size="small" />
@@ -328,6 +387,11 @@ const styles = StyleSheet.create({
     color: "#10B981",
     fontSize: 13,
     fontWeight: "500",
+    fontVariant: ["tabular-nums"],
+  },
+  accuracyText: {
+    fontSize: 12,
+    marginTop: 2,
     fontVariant: ["tabular-nums"],
   },
   retryButton: {
