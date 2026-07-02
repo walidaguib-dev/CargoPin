@@ -45,8 +45,15 @@ function accuracyColor(acc: number): string {
 }
 
 export default function AssignScreen() {
-  const params = useLocalSearchParams<AssignParams>();
-  const blNumbers: string[] = params.blNumbers ? JSON.parse(params.blNumbers) : [];
+
+  const params = useLocalSearchParams();
+  const shipmentId = params.shipmentId as string
+  const clientName = params.clientName as string
+  const merchandiseDescription = params.merchandiseDescription as string
+  const vesselName = params.vesselName as string
+  const blNumbers: string[] = params.blNumbers
+    ? JSON.parse(params.blNumbers as string)
+    : []
 
   const [isCapturing, setIsCapturing] = useState(true);
   const [gpsStatus, setGpsStatus] = useState<string | null>(null);
@@ -58,74 +65,76 @@ export default function AssignScreen() {
   const [submitState, setSubmitState] = useState<SubmitState>({ status: "idle" });
 
   const captureLocation = useCallback(async () => {
-    setIsCapturing(true);
-    setPermissionDenied(false);
-    setGpsStatus("Acquiring GPS signal...");
+    setIsCapturing(true)
+    setPermissionDenied(false)
+    setGpsStatus('Acquiring GPS signal...')
+    setLatitude(null)
+    setLongitude(null)
+    setAccuracy(null)
 
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Permission Required", "Location access needed");
-      setPermissionDenied(true);
-      setIsCapturing(false);
-      return;
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      Alert.alert('Permission Required', 'Location access is required to assign positions')
+      setPermissionDenied(true)
+      setIsCapturing(false)
+      return
     }
 
-    let bestLocation: Location.LocationObject | null = null;
-    let subscription: Location.LocationSubscription | null = null;
+    // Collect all readings into a plain array (no closure issues)
+    const readings: Location.LocationObject[] = []
 
-    await new Promise<void>((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        subscription?.remove();
-        if (bestLocation) {
-          resolve();
-        } else {
-          reject(new Error("GPS timeout"));
-        }
-      }, 20000);
+    const subscription = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.BestForNavigation,
+        timeInterval: 1000,
+        distanceInterval: 0,
+      },
+      (location) => {
+        readings.push(location)
+        const acc = location.coords.accuracy ?? 999
+        setGpsStatus(`Collecting... ±${acc.toFixed(0)}m`)
+      }
+    )
 
-      Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.BestForNavigation,
-          timeInterval: 1000,
-          distanceInterval: 0,
-        },
-        (location) => {
-          const acc = location.coords.accuracy ?? 999;
-          setGpsStatus(`Accuracy: ±${acc.toFixed(0)}m`);
-          if (acc <= 30) {
-            bestLocation = location;
-            clearTimeout(timeout);
-            subscription?.remove();
-            resolve();
-          } else if (!bestLocation || acc < (bestLocation.coords.accuracy ?? 999)) {
-            bestLocation = location;
-          }
-        }
-      ).then((sub) => {
-        subscription = sub;
-      });
-    }).catch(() => {
-      // Use best location we have even if accuracy isn't ideal
-    });
+    // Collect readings for 8 seconds
+    await new Promise<void>((resolve) => setTimeout(resolve, 8000))
+    subscription.remove()
 
-    if (bestLocation) {
-      setLatitude(bestLocation.coords.latitude);
-      setLongitude(bestLocation.coords.longitude);
-      setAccuracy(bestLocation.coords.accuracy ?? null);
-      setGpsStatus(`±${(bestLocation.coords.accuracy ?? 0).toFixed(0)}m accuracy`);
-    } else {
-      Alert.alert("GPS Error", "Could not get location. Go outside and try again.");
+    if (readings.length === 0) {
+      setGpsStatus(null)
+      Alert.alert(
+        'GPS Error',
+        'Could not get location. Make sure GPS is enabled and try again outdoors.'
+      )
+      setIsCapturing(false)
+      return
     }
 
-    setIsCapturing(false);
-  }, []);
+    // Pick the reading with the best (lowest) accuracy value
+    const best = readings.reduce((prev, curr) => {
+      const prevAcc = prev.coords.accuracy ?? 999
+      const currAcc = curr.coords.accuracy ?? 999
+      return currAcc < prevAcc ? curr : prev
+    })
+
+    setLatitude(best.coords.latitude)
+    setLongitude(best.coords.longitude)
+    setAccuracy(best.coords.accuracy ?? null)
+    setGpsStatus(`±${(best.coords.accuracy ?? 0).toFixed(0)}m accuracy`)
+    setIsCapturing(false)
+  }, [])
 
   useEffect(() => {
     void captureLocation();
   }, [captureLocation]);
 
   const handleSubmit = useCallback(async () => {
-    if (latitude === null || longitude === null) return;
+    console.log('Submit called with:', { latitude, longitude })
+
+    if (latitude === null || longitude === null) {
+      Alert.alert('Error', 'GPS location not captured yet')
+      return
+    }
 
     setSubmitState({ status: "submitting" });
     try {
@@ -165,10 +174,10 @@ export default function AssignScreen() {
           {result.areaName && result.zoneName
             ? `Placed in ${result.areaName}, ${result.zoneName}`
             : result.areaName
-            ? `Placed in ${result.areaName}`
-            : result.zoneName
-            ? `Placed in ${result.zoneName}`
-            : "Placed outside mapped areas"}
+              ? `Placed in ${result.areaName}`
+              : result.zoneName
+                ? `Placed in ${result.zoneName}`
+                : "Placed outside mapped areas"}
         </Text>
         {result.isEmergencyPlacement && (
           <View style={styles.emergencyBadge}>
@@ -282,7 +291,7 @@ export default function AssignScreen() {
         style={({ pressed }) => [
           styles.submitButton,
           (isCapturing || latitude === null || submitState.status === "submitting") &&
-            styles.submitButtonDisabled,
+          styles.submitButtonDisabled,
           pressed && styles.submitButtonPressed,
         ]}
         onPress={handleSubmit}

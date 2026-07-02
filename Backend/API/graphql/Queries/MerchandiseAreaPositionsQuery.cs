@@ -11,7 +11,6 @@ namespace API.graphql.Queries
     public class MerchandiseAreaPositionsQuery
     {
         [UsePaging]
-        [UseProjection]
         [UseFiltering(typeof(MerchandiseAreaPositionFilterType))]
         [UseSorting(typeof(MerchandiseAreaPositionSortType))]
         public async Task<IQueryable<MerchandiseAreaPosition>> GetPositions(

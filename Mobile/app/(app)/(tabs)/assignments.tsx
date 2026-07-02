@@ -136,15 +136,15 @@ function AssignmentCard({ item, onEdit, onDelete, isDeleting }: AssignmentCardPr
 
   return (
     <View style={styles.card}>
-      {/* Header: client + state dot + action buttons */}
+      {/* Header: state pill + client name + action buttons */}
       <View style={styles.cardHeader}>
+        <View style={[styles.statePill, isActive ? styles.statePillActive : styles.statePillInactive]}>
+          <Text style={styles.statePillText}>{isActive ? "Active" : "Released"}</Text>
+        </View>
         <Text style={styles.clientName} numberOfLines={1}>
           {item.shipment.client.name}
         </Text>
         <View style={styles.cardActions}>
-          <View
-            style={[styles.stateDot, { backgroundColor: isActive ? "#10B981" : "#64748B" }]}
-          />
           <Pressable
             onPress={() => onEdit(item)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -166,10 +166,18 @@ function AssignmentCard({ item, onEdit, onDelete, isDeleting }: AssignmentCardPr
         </View>
       </View>
 
-      {/* Merchandise · Vessel */}
-      <Text style={styles.merchandiseVessel} numberOfLines={1}>
-        {item.shipment.merchandise.description} · {item.shipment.vessel.name}
+      {/* Merchandise description */}
+      <Text style={styles.merchandiseDescription} numberOfLines={2}>
+        {item.shipment.merchandise.description}
       </Text>
+
+      <View style={styles.separator} />
+
+      {/* Vessel */}
+      <View style={styles.metaRow}>
+        <Ionicons name="boat-outline" size={12} color="#475569" />
+        <Text style={styles.metaText}>{item.shipment.vessel.name}</Text>
+      </View>
 
       {/* Area / Zone */}
       <View style={styles.metaRow}>
@@ -187,38 +195,48 @@ function AssignmentCard({ item, onEdit, onDelete, isDeleting }: AssignmentCardPr
         </View>
       )}
 
-      {/* Emergency badge */}
-      {item.isEmergencyPlacement && (
-        <View style={styles.emergencyBadge}>
-          <Ionicons name="warning-outline" size={11} color="#F59E0B" />
-          <Text style={styles.emergencyText}>Emergency placement</Text>
-        </View>
-      )}
-
-      {/* Notes */}
-      {item.notes ? (
-        <Text style={styles.notes} numberOfLines={2}>
-          {item.notes}
-        </Text>
-      ) : null}
-
       {/* Date */}
       <View style={styles.metaRow}>
         <Ionicons name="time-outline" size={12} color="#475569" />
         <Text style={styles.metaText}>{placedAt}</Text>
       </View>
 
-      {/* Google Maps */}
+      {/* Emergency banner */}
+      {item.isEmergencyPlacement && (
+        <>
+          <View style={styles.separator} />
+          <View style={styles.emergencyBanner}>
+            <Ionicons name="warning" size={14} color="#F59E0B" />
+            <Text style={styles.emergencyBannerText}>Emergency Placement</Text>
+          </View>
+        </>
+      )}
+
+      {/* Notes */}
+      {item.notes ? (
+        <>
+          <View style={styles.separator} />
+          <View style={styles.notesContainer}>
+            <Text style={styles.notes} numberOfLines={3}>
+              {item.notes}
+            </Text>
+          </View>
+        </>
+      ) : null}
+
+      <View style={styles.separator} />
+
+      {/* Google Maps button */}
       <Pressable
         onPress={() =>
           void Linking.openURL(
             `https://www.google.com/maps?q=${item.latitude},${item.longitude}`,
           )
         }
-        style={styles.mapsLink}
+        style={styles.mapsButton}
       >
-        <Ionicons name="map-outline" size={12} color="#0EA5E9" />
-        <Text style={styles.mapsLinkText}>View on Google Maps →</Text>
+        <Ionicons name="map" size={14} color="#0EA5E9" />
+        <Text style={styles.mapsButtonText}>Open in Google Maps</Text>
       </Pressable>
     </View>
   );
@@ -688,14 +706,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
-  stateDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+  statePill: {
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
   },
-  merchandiseVessel: {
+  statePillActive: {
+    backgroundColor: "#10B981",
+  },
+  statePillInactive: {
+    backgroundColor: "#64748B",
+  },
+  statePillText: {
+    color: "#FFFFFF",
+    fontSize: 11,
+    fontWeight: "600",
+  },
+  merchandiseDescription: {
     color: "#94A3B8",
     fontSize: 13,
+    marginTop: 2,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#1E3A5F",
+    marginVertical: 8,
   },
   metaRow: {
     flexDirection: "row",
@@ -707,39 +742,47 @@ const styles = StyleSheet.create({
     fontSize: 12,
     flex: 1,
   },
-  emergencyBadge: {
+  emergencyBanner: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    alignSelf: "flex-start",
-    backgroundColor: "#2D1F00",
-    borderRadius: 6,
+    justifyContent: "center",
+    gap: 6,
+    backgroundColor: "rgba(245, 158, 11, 0.1)",
+    borderColor: "#F59E0B",
     borderWidth: 1,
-    borderColor: "#78350F",
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    marginTop: 2,
+    borderRadius: 8,
+    padding: 8,
   },
-  emergencyText: {
+  emergencyBannerText: {
     color: "#F59E0B",
-    fontSize: 11,
-    fontWeight: "500",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  notesContainer: {
+    borderLeftWidth: 2,
+    borderLeftColor: "#334155",
+    paddingLeft: 8,
   },
   notes: {
-    color: "#475569",
+    color: "#94A3B8",
     fontSize: 12,
     fontStyle: "italic",
-    marginTop: 2,
   },
-  mapsLink: {
+  mapsButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    marginTop: 2,
+    gap: 6,
+    backgroundColor: "#0F172A",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: "#334155",
   },
-  mapsLinkText: {
+  mapsButtonText: {
     color: "#0EA5E9",
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: "600",
   },
   // Header
   headerButton: {
